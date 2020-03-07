@@ -115,7 +115,12 @@ public class StockModel {
         return returnValue;
     }
 
+    /*
+     * returns the estimate profit for stick
+     * @return                  estimated profit
+     */
     public double estimateProfits(){
+        //update stock before?
         return (price * noOfShares) - (buyPrice * initialNoOfShares);
     }
 }
