@@ -123,4 +123,16 @@ public class StockModel {
         //update stock before?
         return (price * noOfShares) - (buyPrice * initialNoOfShares);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this.toString().equals(o.toString())) return true;
+
+        return false;     
+    }
+
+    @Override
+    public String toString(){
+        return this.name + ":" + tickerSymbol  + ":" + Integer.toString(noOfShares);
+    }
 }
