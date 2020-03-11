@@ -123,6 +123,10 @@ public class StockModel {
         //update stock before?
         return (price * noOfShares) - (buyPrice * initialNoOfShares);
     }
+    
+    //public checkTrend(){
+        
+    //}
 
     @Override
     public boolean equals(Object o) {
