@@ -12,6 +12,10 @@ public class FolioModel implements iFolioModel {
         this.name = name;
     }
 
+    public String getName(){
+        return name;
+    }
+
     public ArrayList<StockModel> refresh() {
         for(int i=0;i<stocks.size();i++){
             stocks.set(i, stocks.get(i).refresh());
