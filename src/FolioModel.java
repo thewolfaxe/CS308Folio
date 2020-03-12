@@ -27,14 +27,17 @@ public class FolioModel implements iFolioModel {
         return stocks;
     }
 
-    public boolean addStock(StockModel stock){
-        stocks.add(stock);
+    public boolean addStock(String ticker, String name, int shares){
+        stocks.add(new StockModel(ticker, name, shares));
         return true; //have some way of return false if ticker symbol is invalid
     }
 
-    public boolean deleteStock(StockModel stock) {
-        //done automatically when
-        stocks.remove(stock); //will probably have to override equals method in StockModel for this to work
+    public boolean deleteStock(String ticker) {
+       for(int i=0;i<stocks.size();i++){
+           if(stocks.get(i).getTicker().equals(ticker)){
+
+           }
+       }
         return true; //false if the stock doesnt exist
     }
 
