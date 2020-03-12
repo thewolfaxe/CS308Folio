@@ -106,14 +106,5 @@ public class StockModel implements iStockModel {
         return null;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return this.toString().equals(o.toString());
-    }
-
-    @Override
-    public String toString(){
-        return this.name + ":" + tickerSymbol  + ":" + Integer.toString(noOfShares);
-    }
 
 }
