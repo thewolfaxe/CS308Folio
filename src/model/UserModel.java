@@ -1,7 +1,12 @@
+package model;
+
+import model.iFolioModel;
+import model.iUserModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserModel implements iUserModel{
+public class UserModel implements iUserModel {
 private String username;
 private List<iFolioModel> folios;
 

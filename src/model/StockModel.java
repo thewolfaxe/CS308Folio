@@ -1,3 +1,5 @@
+package model;
+
 public class StockModel implements iStockModel {
 
     private String tickerSymbol;
@@ -106,5 +108,8 @@ public class StockModel implements iStockModel {
         return null;
     }
 
+    public String getTicker(){
+        return tickerSymbol;
+    }
 
 }

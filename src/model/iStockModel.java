@@ -1,3 +1,5 @@
+package model;
+
 public interface iStockModel {
 
         void setName(String name);
@@ -8,5 +10,5 @@ public interface iStockModel {
         double estimateProfits();
         boolean checkTrend();
         StockModel refresh();
-
+        String getTicker();
 }

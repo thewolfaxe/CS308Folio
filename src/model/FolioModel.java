@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 
 public class FolioModel implements iFolioModel {
@@ -18,7 +20,7 @@ public class FolioModel implements iFolioModel {
 
     public void refreshStocks() {
         for(StockModel stock: stocks) {
-            stock.refresh();    //refresh needs to internally update values within StockModel
+            stock.refresh();    //refresh needs to internally update values within model.StockModel
         }
     }
 
