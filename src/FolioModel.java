@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class FolioModel implements iFolioModel {
     
     private User user;
@@ -23,13 +25,13 @@ public class FolioModel implements iFolioModel {
         return stocks;
     }
 
-    public ArrayList<StockModel> sort(int sortCode) {
+    public ArrayList<StockModel> sort(int sortCode, ArrayList<StockModel> stocks) {
         //do something to sort stocks
         return stocks;
     }
 
-    public boolean addStock(String ticker, String name, int shares){
-        stocks.add(new StockModel(ticker, name, shares));
+    public boolean addStock(StockModel stock){
+        stocks.add(stock);
         return true; //have some way of return false if ticker symbol is invalid
     }
 

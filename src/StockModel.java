@@ -84,7 +84,7 @@ public class StockModel {
      * @param numberOfShares    number of shares to increase by
      * @return                  current value of the stock
      */
-    private double getValueStock(String tickerSymbol){
+    public double getValueStock(){
         // get current value by using class provided?
         // set current price as well here?
         return 0.0;
@@ -94,8 +94,8 @@ public class StockModel {
      * updates overall value of the stock (share price x num of shares)
      */
     public void updateStockValue(){
-        setPrice(getValueStock(tickerSymbol));
-        setValue(noOfShares * getValueStock(tickerSymbol));
+        setPrice(getValueStock());
+        setValue(noOfShares * getValueStock());
     }
 
     /*
@@ -130,13 +130,15 @@ public class StockModel {
 
     @Override
     public boolean equals(Object o) {
-        if(this.toString().equals(o.toString())) return true;
-
-        return false;     
+        return this.toString().equals(o.toString());
     }
 
     @Override
     public String toString(){
         return this.name + ":" + tickerSymbol  + ":" + Integer.toString(noOfShares);
+    }
+
+    public StockModel refresh() {
+        return null;
     }
 }
