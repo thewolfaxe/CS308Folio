@@ -1,4 +1,4 @@
-public class StockModel {
+public class StockModel implements iStockModel {
 
     private String tickerSymbol;
     private String name;
