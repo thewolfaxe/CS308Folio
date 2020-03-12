@@ -1,4 +1,4 @@
-public class StockModel {
+public class StockModel implements iStockModel {
 
     private String tickerSymbol;
     private String name;
@@ -106,14 +106,5 @@ public class StockModel {
         return null;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return this.toString().equals(o.toString());
-    }
-
-    @Override
-    public String toString(){
-        return this.name + ":" + tickerSymbol  + ":" + Integer.toString(noOfShares);
-    }
 
 }
