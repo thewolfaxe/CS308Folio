@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserModel implements User{
+public class UserModel implements iUserModel{
 private String username;
-private List<iFolio> folios;
+private List<iFolioModel> folios;
 
-public UserModel(String username, ArrayList<iFolio> folios){
+public UserModel(String username, ArrayList<iFolioModel> folios){
     this.username = username;
     this.folios = folios;
 }
@@ -18,7 +18,7 @@ public void setUsername(String newUsername){
     username = newUsername;
 }
 
-public void addFolio(iFolio newFolio){
+public void addFolio(iFolioModel newFolio){
     folios.add(newFolio);
 }
 

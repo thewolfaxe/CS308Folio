@@ -1,7 +1,7 @@
-public interface User {
+public interface iUserModel {
     String getUsername();
     void setUsername(String newUsername);
-    void addFolio(iFolio newFolio);
+    void addFolio(iFolioModel newFolio);
     int deleteFolio(String folioName);
 
 }

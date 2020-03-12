@@ -3,17 +3,9 @@ public class StockModel {
     private String tickerSymbol;
     private String name;
     private int noOfShares;
-    private Integer initialNoOfShares = null;
-    private double price;
-    private double value; // noOfShares * price
-    private Double buyPrice = null;
-
-    /*
-     * Constructor for stock without values
-     * Needs to use setters
-     */
-    public StockModel(){ //empty
-    }
+    private int initialNoOfShares;
+    private double lastKnownPrice;
+    private double initialBuyPrice;
 
     /*
      * Constructor for stock w/values
@@ -21,91 +13,61 @@ public class StockModel {
      * @param name              name of the stock
      * @param noOfShares        number of shares for given stock
      */
-    public StockModel(String tickerSymbol, String name, int noOfShares){
+    public StockModel(String tickerSymbol, String name, int initialNoOfShares){
         this.tickerSymbol = tickerSymbol;
         this.name = name;
-        this.noOfShares = noOfShares;
+        this.initialNoOfShares = initialNoOfShares;
+        this.noOfShares = initialNoOfShares;
+        if(initialNoOfShares > 0)
+            getCurrentPrices();    //this updates lastKnownPrice and buyPrice
+
     }
 
-    /*
-     * setter for tickerSymbol
-     * @param tickerSymbol      stock ticker symbol
-     */
-    public void setTickerSymbol(String tickerSymbol) {
-        this.tickerSymbol = tickerSymbol;
-    }
 
     /*
      * setter for stock name
      * @param name              name of the stock
      */
     public void setName(String name) {
-        this.name = name;
+        this.name = name;       //need to check if the server class returns a name
     }
 
     /*
-     * setter for number of shares
-     * @param noOfShares        number of shares for stock
+     * updates the lastKnownPrice to the current price
+     * updates the initialBuyPrice if needed
      */
-    public void setNoOfShares(int noOfShares) {
-        this.noOfShares = noOfShares;
-        if(initialNoOfShares == null)
-                initialNoOfShares = noOfShares;
-    }
-
-    /*
-     * setter for price
-     * @param price             price of the stock
-     */
-    public void setPrice(double price) {
-        this.price = price;
-        if(buyPrice == null)
-            buyPrice = price;
+    public void getCurrentPrices() {
+        lastKnownPrice = 1;    //this will pull the real price from the online market
+        if(initialBuyPrice == -1)
+            initialBuyPrice = lastKnownPrice;
     }
 
     /*
      * setter for number of shares
      * @param value             total value of stock (noOfShares * price)
      */
-    public void setValue(double value) {
-        setValue(value);
+    public double getValue() {
+        return noOfShares*lastKnownPrice;
     }
 
     /*
      * increase number of shares in this stock
      * @param numberOfShares    number of shares to increase by
      */
-    public void increaseShares(int numberOfShares){
-        setNoOfShares(noOfShares+=numberOfShares);
-    }
-
-    /*
-     * increase number of shares in this stock
-     * @param numberOfShares    number of shares to increase by
-     * @return                  current value of the stock
-     */
-    public double getValueStock(){
-        // get current value by using class provided?
-        // set current price as well here?
-        return 0.0;
-    }
-
-    /*
-     * updates overall value of the stock (share price x num of shares)
-     */
-    public void updateStockValue(){
-        setPrice(getValueStock());
-        setValue(noOfShares * getValueStock());
+    public void buyShares(int amount){
+        noOfShares += amount;
     }
 
     /*
      * returns the overall value that the stock was sold at
      * @return                  total value stock was sold at
      */
-    public double sellStock(){
+    public boolean sellShares(int amount){
         //full delete
         //can decide whether to leave it on folio with ticker & name with
         //all other values at zeros
+        /*
+        //we can maybe have a sellAll() method to do this
         double returnValue = value;
         tickerSymbol = "";
         name = "";
@@ -113,6 +75,14 @@ public class StockModel {
         price = 0;
         value = 0;
         return returnValue;
+
+         */
+
+        if((noOfShares-amount) < 0)
+            return false;
+
+        noOfShares -= amount;
+        return true;
     }
 
     /*
@@ -121,12 +91,20 @@ public class StockModel {
      */
     public double estimateProfits(){
         //update stock before?
-        return (price * noOfShares) - (buyPrice * initialNoOfShares);
+        //maybe(current value of stocks)-(initial amount spent)
+        return (lastKnownPrice * noOfShares) - (initialBuyPrice * initialNoOfShares);
     }
-    
-    //public checkTrend(){
-        
-    //}
+
+    //this may be a bit of a pain to do properly but can cheat by just checking if current value is more than initialValue
+    public boolean checkTrend(){
+        return false;       //return true if trend is increasing and false if it is decreasing
+    }
+
+    //this needs to pull fresh values from the stock market and update local values
+    public StockModel refresh() {
+        //deffo update lastKnownPrice, push change from here or pull changes from outside??
+        return null;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -138,7 +116,4 @@ public class StockModel {
         return this.name + ":" + tickerSymbol  + ":" + Integer.toString(noOfShares);
     }
 
-    public StockModel refresh() {
-        return null;
-    }
 }
