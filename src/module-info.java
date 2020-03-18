@@ -1,7 +1,4 @@
-module helloFX {
+module FolioTracker {
     requires javafx.controls;
-    requires javafx.fxml;
-
-    opens org.openjfx to javafx.fxml;
-    exports org.openjfx;
+    exports View;
 }
