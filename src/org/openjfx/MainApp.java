@@ -1,7 +1,6 @@
 package org.openjfx;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -20,7 +19,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.awt.*;
 import java.util.Collection;
 
 public class MainApp extends Application {

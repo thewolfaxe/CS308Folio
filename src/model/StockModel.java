@@ -1,5 +1,7 @@
 package model;
 
+import javafx.beans.property.SimpleStringProperty;
+
 public class StockModel implements iStockModel {
 
     private String tickerSymbol;
@@ -108,7 +110,7 @@ public class StockModel implements iStockModel {
         return null;
     }
 
-    public String getTicker(){
+    public String getTickerSymbol(){
         return tickerSymbol;
     }
 

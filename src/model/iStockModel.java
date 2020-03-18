@@ -1,5 +1,7 @@
 package model;
 
+import javafx.beans.property.SimpleStringProperty;
+
 public interface iStockModel {
 
         void setName(String name);
@@ -10,5 +12,5 @@ public interface iStockModel {
         double estimateProfits();
         boolean checkTrend();
         StockModel refresh();
-        String getTicker();
+        String getTickerSymbol();
 }

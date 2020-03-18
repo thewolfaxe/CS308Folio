@@ -36,7 +36,7 @@ public class FolioModel implements iFolioModel {
 
     public boolean deleteStock(String ticker) {
        for(int i=0;i<stocks.size();i++){
-           if(stocks.get(i).getTicker().equals(ticker)){
+           if(stocks.get(i).getTickerSymbol().equals(ticker)){
 
            }
        }
