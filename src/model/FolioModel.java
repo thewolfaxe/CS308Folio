@@ -24,7 +24,7 @@ public class FolioModel implements iFolioModel {
         }
     }
 
-    public ArrayList<StockModel> sort(int sortCode, ArrayList<StockModel> stocks) {
+    public ArrayList<iStockModel> sort(int sortCode, ArrayList<iStockModel> stocks) {
         //do something to sort stocks
         return stocks;
     }
@@ -45,7 +45,7 @@ public class FolioModel implements iFolioModel {
 
     public double getFolioValue() {
         double val = 0;
-        for (StockModel stock : stocks) {
+        for (iStockModel stock : stocks) {
             //stock.refresh();      //maybe call here,
             val += stock.getValue();
         }
