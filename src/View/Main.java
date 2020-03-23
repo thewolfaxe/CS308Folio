@@ -24,7 +24,6 @@ public class Main extends Application {
         primaryStage.setTitle("FolioTracker");
         VBox vBox = new VBox();
 
-
         TabPane tabpane = new TabPane();
         Tab tab1 = new Tab("TestFolio1");
         //we will need a new folioModel for each tab

@@ -6,6 +6,13 @@ import java.io.InputStreamReader;
 public class testClass {
 
 	public static void main(String[] args) {
+
+		FolioModel fm = new FolioModel(1,"name");
+		fm.addStock("APPL","apple",2);
+		fm.save("new.csv");
+
+
+
 		try {
 
 			InputStreamReader isr = new InputStreamReader(System.in);
@@ -17,8 +24,10 @@ public class testClass {
 				System.out.println(line + " has a stock value of " + str);
 				System.out.print("Input a ticker symbol: ");
 			}
+
 		} catch (Exception e) {
 			System.err.println(e);
+
 		}
 	}
 }
