@@ -1,5 +1,8 @@
 package model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class FolioModel implements iFolioModel {
@@ -51,5 +54,33 @@ public class FolioModel implements iFolioModel {
         }
         return val;
     }
-   
+
+    public boolean save(String pathFile){
+        File path = new File(pathFile);
+
+        try(PrintWriter pw = new PrintWriter(path)){
+            StringBuilder sb = new StringBuilder();
+
+            for(int i = 0; i < stocks.size(); i++){ //would use stocks.forEach but confusing to read. . .
+                StockModel s = stocks.get(i);
+
+                sb.append(s.getTickerSymbol());
+                sb.append(',');
+                sb.append(s.getName());
+                sb.append(',');
+                sb.append(s.getNoOfShares());
+                sb.append(',');
+                sb.append(s.getInitialPrice());
+                sb.append(',');
+                sb.append(s.getLastKnownPrice());
+                sb.append(',');
+                sb.append(s.getInitialBuyPrice());
+
+                pw.write(String.valueOf(sb));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 }
