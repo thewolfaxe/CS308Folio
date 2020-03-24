@@ -59,6 +59,18 @@ public class StockModel implements iStockModel {
         return noOfShares*lastKnownPrice;
     }
 
+    public String getName(){
+        return name;
+    }
+    public int getNumShares(){
+        return noOfShares;
+    }
+    public double getPricePerShare(){
+        return lastKnownPrice;
+    }
+    public double getValue(){
+        return lastKnownPrice * noOfShares;
+    }
     /*
      * increase number of shares in this stock
      * @param numberOfShares    number of shares to increase by
