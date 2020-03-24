@@ -12,7 +12,7 @@ public class FolioModel implements iFolioModel {
     private ArrayList<StockModel> stocks;
 
     public FolioModel(int id, String name) {
-        stocks = new ArrayList<>();
+        stocks = new ArrayList<StockModel>();
         this.id = id;
         this.name = name;
     }
@@ -23,12 +23,53 @@ public class FolioModel implements iFolioModel {
 
     public void refreshStocks() {
         for(StockModel stock: stocks) {
-            stock.refresh();    //refresh needs to internally update values within model.StockModel
+            stock.refresh();    
         }
     }
 
-    public ArrayList<iStockModel> sort(int sortCode, ArrayList<iStockModel> stocks) {
-        //do something to sort stocks
+    public ArrayList<StockModel> getStocks() {
+        return stocks;
+    }
+    
+    public ArrayList<StockModel> sort(int sortCode, boolean ascending) {
+        if(sortCode < 0 || sortCode > 4) return null; //view must check this doesnt return null
+        switch(sortCode){
+            case 0: //sort by ticker
+                if(!ascending){
+                    stocks.sort(Comparator.comparing(StockModel::getTickerSymbol));
+                }else{
+                    stocks.sort(Comparator.comparing(StockModel::getTickerSymbol).reversed());
+                }
+                break;
+            case 1: //sort by name
+                if(!ascending){
+                    stocks.sort(Comparator.comparing(StockModel::getName));
+                }else{
+                    stocks.sort(Comparator.comparing(StockModel::getName).reversed());
+                }
+                break;
+            case 2: //sort by no shares
+                if(!ascending){
+                    stocks.sort(Comparator.comparingInt(StockModel::getNumShares));
+                }else{
+                    stocks.sort(Comparator.comparingInt(StockModel::getNumShares).reversed());
+                }
+                break;
+            case 3: //sort by price per share
+                if(!ascending){
+                    stocks.sort(Comparator.comparingDouble(StockModel::getPricePerShare));
+                }else{
+                    stocks.sort(Comparator.comparingDouble(StockModel::getPricePerShare).reversed());
+                }
+                break;
+            case 4: //sort by value
+                if(!ascending){
+                    stocks.sort(Comparator.comparingDouble(StockModel::getValue));
+                }else{
+                    stocks.sort(Comparator.comparingDouble(StockModel::getValue).reversed());
+                }
+                break;
+        }
         return stocks;
     }
 
