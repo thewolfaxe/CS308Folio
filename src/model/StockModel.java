@@ -22,9 +22,10 @@ public class StockModel implements iStockModel {
         this.name = name;
         this.initialNoOfShares = initialNoOfShares;
         this.noOfShares = initialNoOfShares;
-        if(initialNoOfShares > 0)
-            getCurrentPrices();    //this updates lastKnownPrice and buyPrice
-
+        /*if(initialNoOfShares > 0)
+            getCurrentPrices();    //this updates lastKnownPrice and buyPrice */
+        refresh(); //this is called when a new stock is created and the refresh method will update lastknown price therefore initial price can be set to lastknown
+        initialBuyPrice = lastKnownPrice;
     }
 
 
@@ -40,11 +41,15 @@ public class StockModel implements iStockModel {
      * updates the lastKnownPrice to the current price
      * updates the initialBuyPrice if needed
      */
-    public void getCurrentPrices() {
+
+
+//Refresh() method will do this
+  /*  public void getCurrentPrices() {
         lastKnownPrice = 1;    //this will pull the real price from the online market
         if(initialBuyPrice == -1)
             initialBuyPrice = lastKnownPrice;
-    }
+    } */ 
+
 
     /*
      * setter for number of shares
@@ -94,8 +99,7 @@ public class StockModel implements iStockModel {
      * @return                  estimated profit
      */
     public double estimateProfits(){
-        //update stock before?
-        //maybe(current value of stocks)-(initial amount spent)
+        refresh();
         return (lastKnownPrice * noOfShares) - (initialBuyPrice * initialNoOfShares);
     }
 
@@ -107,7 +111,16 @@ public class StockModel implements iStockModel {
     //this needs to pull fresh values from the stock market and update local values
     public StockModel refresh() {
         //deffo update lastKnownPrice, push change from here or pull changes from outside??
-        return null;
+        try{
+            String value = StrathQuoteServer.getLastValue(tickerSymbol);
+            value = value.replace(",", "");
+            lastKnownPrice = Double.parseDouble(value);
+            return this;
+        }Catch(WebsiteDataException | NoSuchTickerException e){
+            System.out.println("failed: " + e);
+            return null;
+        }
+        
     }
 
     public String getTickerSymbol(){
