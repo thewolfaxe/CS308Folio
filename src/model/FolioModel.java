@@ -33,8 +33,13 @@ public class FolioModel implements iFolioModel {
     }
 
     public boolean addStock(String ticker, String name, int shares){
-        stocks.add(new StockModel(ticker, name, shares));
-        return true; //have some way of return false if ticker symbol is invalid
+        StockModel newStock = new StockModel(ticker, name, shares)
+        if(newStock.refresh != null){
+            stocks.add(stock);
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public boolean deleteStock(String ticker) {
@@ -50,7 +55,7 @@ public class FolioModel implements iFolioModel {
     public double getFolioValue() {
         double val = 0;
         for (iStockModel stock : stocks) {
-            //stock.refresh();      //maybe call here,
+            stock.refresh();
             val += stock.getValue();
         }
         return val;
