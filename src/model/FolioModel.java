@@ -40,10 +40,11 @@ public class FolioModel implements iFolioModel {
     public boolean deleteStock(String ticker) {
        for(int i=0;i<stocks.size();i++){
            if(stocks.get(i).getTickerSymbol().equals(ticker)){
-
+               stocks.remove(i);
+               return true;
            }
        }
-        return true; //false if the stock doesnt exist
+        return false; //false if the stock doesnt exist
     }
 
     public double getFolioValue() {
