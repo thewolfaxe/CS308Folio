@@ -1,9 +1,10 @@
-package model;
+package Model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class FolioModel implements iFolioModel {
     
@@ -57,9 +58,9 @@ public class FolioModel implements iFolioModel {
                 break;
             case 3: //sort by price per share
                 if(!ascending){
-                    stocks.sort(Comparator.comparingDouble(StockModel::getPricePerShare));
+                    stocks.sort(Comparator.comparingDouble(StockModel::getLastKnownPrice));
                 }else{
-                    stocks.sort(Comparator.comparingDouble(StockModel::getPricePerShare).reversed());
+                    stocks.sort(Comparator.comparingDouble(StockModel::getLastKnownPrice).reversed());
                 }
                 break;
             case 4: //sort by value
@@ -73,14 +74,20 @@ public class FolioModel implements iFolioModel {
         return stocks;
     }
 
-    public boolean addStock(String ticker, String name, int shares){
-        StockModel newStock = new StockModel(ticker, name, shares)
-        if(newStock.refresh != null){
-            stocks.add(stock);
-            return true;
-        }else{
-            return false;
+    public StockModel addStock(String ticker, String name, int shares){
+        for(StockModel stock: stocks) {
+            if(stock.getTickerSymbol().equals(ticker)) {
+                stock.buyShares(shares);
+                return stock;
+            }
         }
+
+        StockModel newStock = new StockModel(ticker, name, shares);
+        if (newStock.refresh() != null) {
+            stocks.add(newStock);
+            return newStock;
+        }else
+            return null;
     }
 
     public boolean deleteStock(String ticker) {
@@ -95,7 +102,7 @@ public class FolioModel implements iFolioModel {
 
     public double getFolioValue() {
         double val = 0;
-        for (iStockModel stock : stocks) {
+        for (StockModel stock : stocks) {
             stock.refresh();
             val += stock.getValue();
         }
@@ -108,20 +115,18 @@ public class FolioModel implements iFolioModel {
         try(PrintWriter pw = new PrintWriter(path)){
             StringBuilder sb = new StringBuilder();
 
-            for(int i = 0; i < stocks.size(); i++){ //would use stocks.forEach but confusing to read. . .
-                StockModel s = stocks.get(i);
-
+            for (StockModel s : stocks) { //would use stocks.forEach but confusing to read. . .
                 sb.append(s.getTickerSymbol());
                 sb.append(',');
                 sb.append(s.getName());
                 sb.append(',');
-                sb.append(s.getNoOfShares());
+                sb.append(s.getInitialNoOfShares());
                 sb.append(',');
-                sb.append(s.getInitialPrice());
+                sb.append(s.getInitBuyPrice());
+                sb.append(',');
+                sb.append(s.getNumShares());
                 sb.append(',');
                 sb.append(s.getLastKnownPrice());
-                sb.append(',');
-                sb.append(s.getInitialBuyPrice());
 
                 pw.write(String.valueOf(sb));
             }

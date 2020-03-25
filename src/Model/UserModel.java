@@ -1,7 +1,4 @@
-package model;
-
-import model.iFolioModel;
-import model.iUserModel;
+package Model;
 
 import java.util.ArrayList;
 import java.util.List;
