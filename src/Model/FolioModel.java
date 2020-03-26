@@ -135,4 +135,8 @@ public class FolioModel implements iFolioModel {
         }
         return true;
     }
+
+    public int getId() {
+        return id;
+    }
 }
