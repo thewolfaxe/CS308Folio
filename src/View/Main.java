@@ -16,6 +16,7 @@ import Model.FolioModel;
 import Model.StockModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends Application {
 
@@ -58,8 +59,9 @@ public class Main extends Application {
         newStocks.setSpacing(10);
         newStocks.setStyle("-fx-background-color:  rgba(0,0,0,0.3);");
         Button add = new Button("Add");
+        Button refresh = new Button("Refresh stock values");
 
-        newStocks.getChildren().addAll(nameStock, stockInfo, add);
+        newStocks.getChildren().addAll(nameStock, stockInfo, add, refresh);
         newStocks.setAlignment(Pos.CENTER);
 
         ObservableList<StockModel> stocks = FXCollections.observableArrayList();
@@ -130,6 +132,17 @@ public class Main extends Application {
                 addedError.setContentText("Please make sure all the provided info is correct");
                 System.out.println("Failed");
                 addedError.showAndWait();
+            }
+        });
+
+        refresh.setOnAction(a -> {
+            ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+            for(StockModel stock : refreshedStocks){
+                System.out.println(stock.getName());
+            }
+
+            for(int i = 0; i < refreshedStocks.size(); i++){
+                stocks.set(i,refreshedStocks.get(i));
             }
         });
 
