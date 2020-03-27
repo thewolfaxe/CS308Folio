@@ -1,9 +1,13 @@
 package View;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -14,9 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import Model.FolioModel;
 import Model.StockModel;
+import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main extends Application {
 
@@ -121,6 +124,19 @@ public class Main extends Application {
 
 
         Controller.ButtonHandler buttonHandler = new Controller.ButtonHandler(folioModel);
+        Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(5), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                for(int i = 0; i < refreshedStocks.size(); i++){
+                    stocks.set(i,refreshedStocks.get(i));
+                }
+                System.out.println("stocks refreshed");
+            }
+        }));
+        autoRefresh.setCycleCount(Timeline.INDEFINITE);
+        autoRefresh.play();
+
         add.setOnAction(a -> {
             StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
             if(stock != null)
