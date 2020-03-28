@@ -1,5 +1,11 @@
 package Model;
 
+import java.io.Serializable;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableArray;
+
 public class StockModel implements iStockModel, Serializable {
 
     private String tickerSymbol;
