@@ -146,7 +146,6 @@ public class Main extends Application {
 
             tab1.setContent(tabContent);
             tabpane.getTabs().add(tab1); //add all probably
-            vBox.getChildren().add(tabpane);
 
             Controller.ButtonHandler buttonHandler = new Controller.ButtonHandler(folios.get(i));
             Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(5), new EventHandler<ActionEvent>() {
@@ -160,6 +159,7 @@ public class Main extends Application {
                     System.out.println("stocks refreshed");
                 }
             }));
+
             autoRefresh.setCycleCount(Timeline.INDEFINITE);
             autoRefresh.play();
             add.setOnAction(a -> {
@@ -183,6 +183,13 @@ public class Main extends Application {
                 }
             });
 
+            refresh.setOnAction(a -> {
+                ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                for (int j = 0; j < refreshedStocks.size(); j++) {
+                    stocks.set(j, refreshedStocks.get(j));
+                }
+            });
+
             table.setRowFactory(a -> {
                 TableRow<StockModel> row = new TableRow<>();
                 row.setOnMouseClicked(e -> {
@@ -199,23 +206,22 @@ public class Main extends Application {
                 return row;
             });
 
-            refresh.setOnAction(a -> {
-                ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
-                for (int j = 0; j < refreshedStocks.size(); j++) {
-                    stocks.set(j, refreshedStocks.get(j));
-                }
-            });
+            vBox.getChildren().addAll(tabpane);
         }
 
-//        vBox.getChildren().addAll(tabpane);
+//
+//            primaryStage.setScene(new Scene(vBox, 600, 600));
+//            primaryStage.show();
+//
+//
 
-        System.out.println("HERE");
+
+//            vBox.getChildren().add(tabpane);
 
 
         primaryStage.setScene(new Scene(vBox, 1000, 600));
         primaryStage.show();
 
-        System.out.println("HERE");
 
         menuItem1.setOnAction(e -> {
             newDialog();
@@ -226,39 +232,38 @@ public class Main extends Application {
             }
             System.out.println(newPopupField.toString());
         });
-
-    }
-
-    private void getStocks() {
-        return;
     }
 
 
-    private void newDialog() {
+        private void getStocks () {
+            return;
+        }
 
-        TextInputDialog dialog = new TextInputDialog();
 
-        dialog.setTitle("Enter new stock name");
-        dialog.setHeaderText("Enter stock name");
-        dialog.setContentText("Stock Name:");
+        private void newDialog() {
 
-        Optional<String> result = dialog.showAndWait();
+            TextInputDialog dialog = new TextInputDialog();
 
-        result.ifPresent(name -> {
-            newPopupField = result.get();
-            if (folios.size() > 0) {
-                folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
-            } else {
-                folios.add(new FolioModel(0, newPopupField));
+            dialog.setTitle("Enter new stock name");
+            dialog.setHeaderText("Enter stock name");
+            dialog.setContentText("Stock Name:");
 
-            }
-            System.out.println(folios.size());
+            Optional<String> result = dialog.showAndWait();
 
-        });
-    }
+            result.ifPresent(name -> {
+                newPopupField = result.get();
+                if (folios.size() > 0) {
+                    folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
+                } else {
+                    folios.add(new FolioModel(0, newPopupField));
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+                }
+                System.out.println(folios.size());
 
+            });
+        }
+
+        public static void main (String[]args){
+            launch(args);
+        }
 }

@@ -1,13 +1,21 @@
 package Model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class FolioModel implements iFolioModel {
+public class FolioModel implements iFolioModel, Serializable {
     
+	private static final long serialversionUID = 123456789L; 
+	
     private int id;
     private String name;
     private ArrayList<StockModel> stocks;
@@ -109,6 +117,41 @@ public class FolioModel implements iFolioModel {
         return val;
     }
 
+    public boolean save(String path) { //this takes just a path, no filename
+    	path += this.name + ".ser";
+    	try {
+    		FileOutputStream file = new FileOutputStream(path); 
+            ObjectOutputStream out = new ObjectOutputStream(file); 
+            out.writeObject(this); 
+            out.close(); 
+            file.close(); 
+            System.out.println("Folio has been saved"); 
+           return true;
+    	}catch(IOException e) {
+            System.out.println("Failed: " + e);
+    		return false;
+    	}
+    	
+    }
+    
+    public FolioModel load(String path) { //this takes full path to file. View must check for null returns
+    	try { 
+            FileInputStream file = new FileInputStream(path); 
+            ObjectInputStream in = new ObjectInputStream(file); 
+            Object object = (FolioModel)in.readObject(); 
+            in.close(); 
+            file.close(); 
+            System.out.println("Folio has been loaded"); 
+            return (FolioModel) object;
+        }catch (IOException ex) { 
+            System.out.println("IOException is caught"); 
+            return null;
+        }catch (ClassNotFoundException ex) { 
+            System.out.println("ClassNotFoundException" + " is caught"); 
+            return null;
+        } 
+    }
+    /*
     public boolean save(String pathFile){
         File path = new File(pathFile);
 
@@ -134,8 +177,9 @@ public class FolioModel implements iFolioModel {
             e.printStackTrace();
         }
         return true;
-    }
-
+    } */
+  
+    
     public int getId() {
         return id;
     }
