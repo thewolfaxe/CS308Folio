@@ -95,7 +95,6 @@ public class Main extends Application {
             TextField tickerSymbol_txt = new TextField();
             Label numberShares = new Label("Number of Shares");
             TextField numberShares_txt = new TextField();
-            stockInfo.getChildren().addAll(name, name_txt, tickerSymbol, tickerSymbol_txt, numberShares, numberShares_txt);
 //        stockInfo.setPadding(s);
             stockInfo.setSpacing(10);
             stockInfo.setAlignment(Pos.CENTER);
@@ -104,9 +103,10 @@ public class Main extends Application {
             newStocks.setSpacing(10);
             newStocks.setStyle("-fx-background-color:  rgba(0,0,0,0.3);");
             Button add = new Button("Add");
+            stockInfo.getChildren().addAll(name, name_txt, tickerSymbol, tickerSymbol_txt, numberShares, numberShares_txt, add);
             Button refresh = new Button("Refresh stock values");
 
-            newStocks.getChildren().addAll(nameStock, stockInfo, add, refresh);
+            newStocks.getChildren().addAll(nameStock, stockInfo, refresh);
             newStocks.setAlignment(Pos.CENTER);
 
             ObservableList<StockModel> stocks = FXCollections.observableArrayList();
@@ -154,7 +154,7 @@ public class Main extends Application {
             tabpane.getTabs().add(tab1); //add all probably
 
             Controller.ButtonHandler buttonHandler = new Controller.ButtonHandler(folios.get(i));
-            Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(5), new EventHandler<ActionEvent>() {
+            Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(10), new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
                     ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
