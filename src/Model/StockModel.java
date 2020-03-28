@@ -101,6 +101,7 @@ public class StockModel implements iStockModel, Serializable {
         if((numShares - amount) < 0)
             return false;
 
+       
         numShares -= amount;
         setValue(getNumShares()*getLastKnownPrice());
         return true;
