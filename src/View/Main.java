@@ -76,20 +76,20 @@ public class Main extends Application {
 
             VBox newStocks = new VBox();
 
+//            nameStock.setSpacing(10);
+////        nameStock.setPadding(s);
+//            nameStock.setAlignment(Pos.CENTER);
+//            nameStock.getChildren().addAll(name, name_txt);
+
+            HBox stockInfo = new HBox();
             HBox nameStock = new HBox();
             Label name = new Label("Chosen Name");
             TextField name_txt = new TextField();
-            nameStock.setSpacing(10);
-//        nameStock.setPadding(s);
-            nameStock.setAlignment(Pos.CENTER);
-            nameStock.getChildren().addAll(name, name_txt);
-
-            HBox stockInfo = new HBox();
             Label tickerSymbol = new Label("Ticker Symbol");
             TextField tickerSymbol_txt = new TextField();
             Label numberShares = new Label("Number of Shares");
             TextField numberShares_txt = new TextField();
-            stockInfo.getChildren().addAll(tickerSymbol, tickerSymbol_txt, numberShares, numberShares_txt);
+            stockInfo.getChildren().addAll(name, name_txt, tickerSymbol, tickerSymbol_txt, numberShares, numberShares_txt);
 //        stockInfo.setPadding(s);
             stockInfo.setSpacing(10);
             stockInfo.setAlignment(Pos.CENTER);
@@ -164,8 +164,27 @@ public class Main extends Application {
             autoRefresh.play();
             add.setOnAction(a -> {
                 StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
-                if (stock != null)
-                    stocks.add(stock);
+                boolean isin = false;
+                if (stock != null){
+                    if(stocks.contains(stock)){
+                        stocks.set(stocks.indexOf(stock), stock);
+                    }
+//
+//                    System.out.println(stock.toString());
+//                    for(StockModel sm : stocks){
+//                        if(sm.getTickerSymbol().equals(tickerSymbol.getText())){
+//                            if(sm.getName().equals(name))
+//                                System.out.println(true);
+//                            isin = true;
+//                            sm.buyShares(Integer.parseInt(numberShares_txt.getText()));
+////                            return s;
+//                        }
+//                    }
+                    else{
+
+                        stocks.add(stock);
+                    }
+                }
                 else {
                     Alert addedError = new Alert(Alert.AlertType.ERROR);
                     addedError.setTitle("Error");
@@ -199,7 +218,7 @@ public class Main extends Application {
             System.out.println("HERE");
 
 
-            primaryStage.setScene(new Scene(vBox, 600, 600));
+            primaryStage.setScene(new Scene(vBox, 1000, 600));
             primaryStage.show();
 
 

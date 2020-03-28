@@ -3,6 +3,8 @@ package Controller;
 import Model.StockModel;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
+
 public class ButtonHandler {
     Model.FolioModel folioModel;
 
@@ -17,6 +19,10 @@ public class ButtonHandler {
         } catch (Exception e) {
             return null;
         }
+
+        ArrayList<StockModel> stocks = folioModel.getStocks();
+
+
 
         return folioModel.addStock(ticker, name, numShares);
 
