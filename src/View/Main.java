@@ -36,7 +36,6 @@ public class Main extends Application {
         Menu fileMenu = new Menu("File");
         MenuItem menuItem1 = new MenuItem("New");
 
-
         fileMenu.getItems().add(menuItem1);
 
 
@@ -58,6 +57,7 @@ public class Main extends Application {
             tabContent.getChildren().add(noFolio);
             tab1.setContent(tabContent);
             tabpane.getTabs().add(tab1);
+            System.out.println("H");
 
         }
         for (int i = 0; i < folios.size(); i++) {
@@ -145,16 +145,7 @@ public class Main extends Application {
 //        table.getItems().add(new StockModel("h", "h",0));
 
             tab1.setContent(tabContent);
-
             tabpane.getTabs().add(tab1); //add all probably
-
-
-            vBox.getChildren().addAll(tabpane);
-
-
-            primaryStage.setScene(new Scene(vBox, 600, 600));
-            primaryStage.show();
-
 
             Controller.ButtonHandler buttonHandler = new Controller.ButtonHandler(folios.get(i));
             Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(5), new EventHandler<ActionEvent>() {
@@ -163,10 +154,12 @@ public class Main extends Application {
                     ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
                     for (int i = 0; i < refreshedStocks.size(); i++) {
                         stocks.set(i, refreshedStocks.get(i));
+                        System.out.println(refreshedStocks.get(i).getValue());
                     }
                     System.out.println("stocks refreshed");
                 }
             }));
+
             autoRefresh.setCycleCount(Timeline.INDEFINITE);
             autoRefresh.play();
             add.setOnAction(a -> {
@@ -189,8 +182,19 @@ public class Main extends Application {
                     stocks.set(j, refreshedStocks.get(j));
                 }
             });
+        }
 
-            vBox.getChildren().add(tabpane);
+
+            vBox.getChildren().addAll(tabpane);
+
+//
+//            primaryStage.setScene(new Scene(vBox, 600, 600));
+//            primaryStage.show();
+//
+//
+
+
+//            vBox.getChildren().add(tabpane);
 
             System.out.println("HERE");
 
@@ -200,18 +204,6 @@ public class Main extends Application {
 
 
             menuItem1.setOnAction(e -> {
-//            newPopup ep = new newPopup();
-//            try {
-//                ep.start(primaryStage);
-//                ep.wait(1000);
-//                String n = ep.folioName;
-//                System.out.println(n);
-//
-//                // https://o7planning.org/en/11537/javafx-textinputdialog-tutorial
-//
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
                 newDialog();
                 try {
                     start(primaryStage);
@@ -222,7 +214,7 @@ public class Main extends Application {
             });
 
         }
-    }
+
         private void getStocks () {
             return;
         }
