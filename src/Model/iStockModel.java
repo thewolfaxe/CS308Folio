@@ -7,4 +7,13 @@ public interface iStockModel {
         double estimateProfits();
         boolean checkTrend();
         StockModel refresh();
+        String getTickerSymbol();
+        String getName();
+        int getNumShares();
+        int getInitialNoOfShares();
+        double getLastKnownPrice();
+        double getInitBuyPrice();
+        double getValue();
+        void setValue(double value);
+
 }
