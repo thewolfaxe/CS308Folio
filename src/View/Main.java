@@ -148,9 +148,12 @@ public class Main extends Application {
             ButtonHandler buttonHandler = new ButtonHandler(folios.get(i));
             add.setOnAction(a -> {
                 StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
-                if(stock != null)
+                if(stock != null) {
                     stocks.add(stock);
-                else {
+                    name_txt.clear();
+                    tickerSymbol_txt.clear();
+                    numberShares_txt.clear();
+                }else {
                     Alert addedError = new Alert(Alert.AlertType.ERROR);
                     addedError.setTitle("Error");
                     addedError.setHeaderText("Error adding your stock");
@@ -158,6 +161,18 @@ public class Main extends Application {
                     System.out.println("Failed");
                     addedError.showAndWait();
                 }
+            });
+
+            table.setRowFactory(a -> {
+                TableRow<StockModel> row = new TableRow<>();
+                row.setOnMouseClicked(e -> {
+                    if(e.getClickCount() == 2 && (!row.isEmpty())) {
+                        EditStockPopup popupEdit = new EditStockPopup(row.getItem(), folios.get(finalI).getName());
+                        Stage popup = popupEdit.popup();
+                        popup.showAndWait();
+                    }
+                });
+                return row;
             });
         }
         vBox.getChildren().add(tabpane);

@@ -20,4 +20,5 @@ public class ButtonHandler {
         return folioModel.addStock(ticker, name, numShares);
 
     }
+
 }

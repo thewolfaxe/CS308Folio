@@ -64,6 +64,10 @@ public class StockModel implements iStockModel {
         this.value.set(value);
     }
 
+    public double getInitValue() {
+        return getInitBuyPrice()*getInitialNoOfShares();
+    }
+
     /*
      * increase number of shares in this stock
      * @param numberOfShares    number of shares to increase by
