@@ -209,56 +209,65 @@ public class Main extends Application {
             vBox.getChildren().addAll(tabpane);
         }
 
-//            vBox.getChildren().add(tabpane);
+//
+//            primaryStage.setScene(new Scene(vBox, 600, 600));
+//            primaryStage.show();
+//
+//
 
         System.out.println("HERE");
 
 //            vBox.getChildren().add(tabpane);
 
-        primaryStage.setScene(new Scene(vBox, 1000, 600));
-        primaryStage.show();
-
-        menuItem1.setOnAction(e -> {
-            newDialog();
-            try {
-                start(primaryStage);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            System.out.println(newPopupField.toString());
-        });
-
-    }
-
-    private void getStocks() {
-        return;
-    }
+            System.out.println("HERE");
 
 
-    private void newDialog() {
+            primaryStage.setScene(new Scene(vBox, 1000, 600));
+            primaryStage.show();
 
-        TextInputDialog dialog = new TextInputDialog();
 
-        dialog.setTitle("Enter new stock name");
-        dialog.setHeaderText("Enter stock name");
-        dialog.setContentText("Stock Name:");
+            menuItem1.setOnAction(e -> {
+                newDialog();
+                try {
+                    start(primaryStage);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                System.out.println(newPopupField.toString());
+            });
 
-        Optional<String> result = dialog.showAndWait();
+        }
 
-        result.ifPresent(name -> {
-            newPopupField = result.get();
-            if (folios.size() > 0) {
-                folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
-            } else {
-                folios.add(new FolioModel(0, newPopupField));
+        private void getStocks () {
+            return;
+        }
 
-            }
-            System.out.println(folios.size());
 
-        });
-    }
+        private void newDialog() {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+            TextInputDialog dialog = new TextInputDialog();
+
+            dialog.setTitle("Enter new stock name");
+            dialog.setHeaderText("Enter stock name");
+            dialog.setContentText("Stock Name:");
+
+            Optional<String> result = dialog.showAndWait();
+
+            result.ifPresent(name -> {
+                newPopupField = result.get();
+                if (folios.size() > 0) {
+                    folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
+                } else {
+                    folios.add(new FolioModel(0, newPopupField));
+
+                }
+                System.out.println(folios.size());
+
+            });
+        }
+
+        public static void main (String[]args){
+            launch(args);
+        }
+
 }

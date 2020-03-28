@@ -135,8 +135,8 @@ public class FolioModel implements iFolioModel, Serializable {
     }
     
     public FolioModel load(String path) { //this takes full path to file. View must check for null returns
-    	try {
-            FileInputStream file = new FileInputStream(path); 
+    	try { 
+            FileInputStream file = new FileInputStream(path);
             ObjectInputStream in = new ObjectInputStream(file); 
             Object object = (FolioModel)in.readObject(); 
             in.close(); 
