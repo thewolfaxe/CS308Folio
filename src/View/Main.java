@@ -164,28 +164,16 @@ public class Main extends Application {
             autoRefresh.play();
             add.setOnAction(a -> {
                 StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
-                boolean isin = false;
-                if (stock != null){
-                    if(stocks.contains(stock)){
+                if (stock != null) {
+                    if (stocks.contains(stock))
                         stocks.set(stocks.indexOf(stock), stock);
-                    }
-//
-//                    System.out.println(stock.toString());
-//                    for(StockModel sm : stocks){
-//                        if(sm.getTickerSymbol().equals(tickerSymbol.getText())){
-//                            if(sm.getName().equals(name))
-//                                System.out.println(true);
-//                            isin = true;
-//                            sm.buyShares(Integer.parseInt(numberShares_txt.getText()));
-////                            return s;
-//                        }
-//                    }
-                    else{
-
+                    else
                         stocks.add(stock);
-                    }
-                }
-                else {
+
+                    name_txt.clear();
+                    tickerSymbol_txt.clear();
+                    numberShares_txt.clear();
+                } else {
                     Alert addedError = new Alert(Alert.AlertType.ERROR);
                     addedError.setTitle("Error");
                     addedError.setHeaderText("Error adding your stock");
@@ -201,10 +189,25 @@ public class Main extends Application {
                     stocks.set(j, refreshedStocks.get(j));
                 }
             });
-        }
 
+            table.setRowFactory(a -> {
+                TableRow<StockModel> row = new TableRow<>();
+                row.setOnMouseClicked(e -> {
+                    if (e.getClickCount() == 2 && (!row.isEmpty())) {
+                        EditStockPopup popupEdit = new EditStockPopup(row.getItem(), folios.get(finalI).getName());
+                        Stage popup = popupEdit.popup();
+                        popup.showAndWait();
+                    }
+                    ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                    for (int j = 0; j < refreshedStocks.size(); j++) {
+                        stocks.set(j, refreshedStocks.get(j));
+                    }
+                });
+                return row;
+            });
 
             vBox.getChildren().addAll(tabpane);
+        }
 
 //
 //            primaryStage.setScene(new Scene(vBox, 600, 600));
@@ -212,6 +215,7 @@ public class Main extends Application {
 //
 //
 
+        System.out.println("HERE");
 
 //            vBox.getChildren().add(tabpane);
 

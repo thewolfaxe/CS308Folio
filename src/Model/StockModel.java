@@ -69,6 +69,10 @@ public class StockModel implements iStockModel, Serializable {
         return initialBuyPrice;
     }
 
+    public double getInitValue() {
+        return getInitBuyPrice()*getInitialNoOfShares();
+    }
+
     public double getValue() {
        // return value.get();
     	return value;
