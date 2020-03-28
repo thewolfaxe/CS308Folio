@@ -31,6 +31,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("FolioTracker");
         VBox vBox = new VBox();
+        VBox innerTab;
 
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
@@ -57,10 +58,15 @@ public class Main extends Application {
             tabContent.getChildren().add(noFolio);
             tab1.setContent(tabContent);
             tabpane.getTabs().add(tab1);
+            innerTab = new VBox();
+            innerTab.getChildren().add(tabpane);
             System.out.println("H");
-
+        }else {
+            innerTab = new VBox();
         }
         for (int i = 0; i < folios.size(); i++) {
+            innerTab = new VBox();
+
 
             Tab tab1 = new Tab(folios.get(i).getName()); // Set folio tab name
 
@@ -206,7 +212,7 @@ public class Main extends Application {
                 return row;
             });
 
-            vBox.getChildren().addAll(tabpane);
+            innerTab.getChildren().addAll(tabpane);
         }
 
 //
@@ -215,59 +221,56 @@ public class Main extends Application {
 //
 //
 
+            vBox.getChildren().add(innerTab);
+
         System.out.println("HERE");
 
-//            vBox.getChildren().add(tabpane);
-
-            System.out.println("HERE");
-
-
-            primaryStage.setScene(new Scene(vBox, 1000, 600));
-            primaryStage.show();
+        primaryStage.setScene(new Scene(vBox, 1000, 600));
+        primaryStage.show();
 
 
-            menuItem1.setOnAction(e -> {
-                newDialog();
-                try {
-                    start(primaryStage);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                System.out.println(newPopupField.toString());
-            });
+        menuItem1.setOnAction(e -> {
+            newDialog();
+            try {
+                start(primaryStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            System.out.println(newPopupField.toString());
+        });
 
-        }
+    }
 
-        private void getStocks () {
-            return;
-        }
+    private void getStocks() {
+        return;
+    }
 
 
-        private void newDialog() {
+    private void newDialog() {
 
-            TextInputDialog dialog = new TextInputDialog();
+        TextInputDialog dialog = new TextInputDialog();
 
-            dialog.setTitle("Enter new stock name");
-            dialog.setHeaderText("Enter stock name");
-            dialog.setContentText("Stock Name:");
+        dialog.setTitle("Enter new stock name");
+        dialog.setHeaderText("Enter stock name");
+        dialog.setContentText("Stock Name:");
 
-            Optional<String> result = dialog.showAndWait();
+        Optional<String> result = dialog.showAndWait();
 
-            result.ifPresent(name -> {
-                newPopupField = result.get();
-                if (folios.size() > 0) {
-                    folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
-                } else {
-                    folios.add(new FolioModel(0, newPopupField));
+        result.ifPresent(name -> {
+            newPopupField = result.get();
+            if (folios.size() > 0) {
+                folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
+            } else {
+                folios.add(new FolioModel(0, newPopupField));
 
-                }
-                System.out.println(folios.size());
+            }
+            System.out.println(folios.size());
 
-            });
-        }
+        });
+    }
 
-        public static void main (String[]args){
-            launch(args);
-        }
+    public static void main(String[] args) {
+        launch(args);
+    }
 
 }
