@@ -76,20 +76,20 @@ public class Main extends Application {
 
             VBox newStocks = new VBox();
 
+//            nameStock.setSpacing(10);
+////        nameStock.setPadding(s);
+//            nameStock.setAlignment(Pos.CENTER);
+//            nameStock.getChildren().addAll(name, name_txt);
+
+            HBox stockInfo = new HBox();
             HBox nameStock = new HBox();
             Label name = new Label("Chosen Name");
             TextField name_txt = new TextField();
-            nameStock.setSpacing(10);
-//        nameStock.setPadding(s);
-            nameStock.setAlignment(Pos.CENTER);
-            nameStock.getChildren().addAll(name, name_txt);
-
-            HBox stockInfo = new HBox();
             Label tickerSymbol = new Label("Ticker Symbol");
             TextField tickerSymbol_txt = new TextField();
             Label numberShares = new Label("Number of Shares");
             TextField numberShares_txt = new TextField();
-            stockInfo.getChildren().addAll(tickerSymbol, tickerSymbol_txt, numberShares, numberShares_txt);
+            stockInfo.getChildren().addAll(name, name_txt, tickerSymbol, tickerSymbol_txt, numberShares, numberShares_txt);
 //        stockInfo.setPadding(s);
             stockInfo.setSpacing(10);
             stockInfo.setAlignment(Pos.CENTER);
@@ -160,13 +160,16 @@ public class Main extends Application {
                     System.out.println("stocks refreshed");
                 }
             }));
-
             autoRefresh.setCycleCount(Timeline.INDEFINITE);
             autoRefresh.play();
             add.setOnAction(a -> {
                 StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
                 if (stock != null) {
-                    stocks.add(stock);
+                    if (stocks.contains(stock))
+                        stocks.set(stocks.indexOf(stock), stock);
+                    else
+                        stocks.add(stock);
+
                     name_txt.clear();
                     tickerSymbol_txt.clear();
                     numberShares_txt.clear();
@@ -188,6 +191,10 @@ public class Main extends Application {
                         Stage popup = popupEdit.popup();
                         popup.showAndWait();
                     }
+                    ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                    for (int j = 0; j < refreshedStocks.size(); j++) {
+                        stocks.set(j, refreshedStocks.get(j));
+                    }
                 });
                 return row;
             });
@@ -198,28 +205,17 @@ public class Main extends Application {
                     stocks.set(j, refreshedStocks.get(j));
                 }
             });
-
-
         }
 
-
-        vBox.getChildren().addAll(tabpane);
-
-//
-//            primaryStage.setScene(new Scene(vBox, 600, 600));
-//            primaryStage.show();
-//
-//
-
-
-//            vBox.getChildren().add(tabpane);
+//        vBox.getChildren().addAll(tabpane);
 
         System.out.println("HERE");
 
 
-        primaryStage.setScene(new Scene(vBox, 600, 600));
+        primaryStage.setScene(new Scene(vBox, 1000, 600));
         primaryStage.show();
 
+        System.out.println("HERE");
 
         menuItem1.setOnAction(e -> {
             newDialog();

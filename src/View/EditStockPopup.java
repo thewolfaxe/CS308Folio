@@ -4,6 +4,7 @@ import Controller.ButtonHandler;
 import Controller.PopupButtonHandler;
 import Model.StockModel;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

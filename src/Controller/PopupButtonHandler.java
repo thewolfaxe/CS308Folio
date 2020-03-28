@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.StockModel;
+import javafx.collections.ObservableList;
 
 public class PopupButtonHandler {
     StockModel stock;

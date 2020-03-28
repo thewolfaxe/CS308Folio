@@ -1,19 +1,14 @@
 package Model;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableArray;
-
 public class StockModel implements iStockModel {
 
-    private SimpleStringProperty tickerSymbol;
-    private SimpleStringProperty name;
-    private SimpleIntegerProperty numShares;
+    private String tickerSymbol;
+    private String name;
+    private Integer numShares;
     private int initialNoOfShares;
-    private SimpleDoubleProperty lastKnownPrice;
+    private Double lastKnownPrice;
     private double initialBuyPrice;
-    private SimpleDoubleProperty value;
+    private Double value;
 
     /*
      * Constructor for stock w/values
@@ -22,26 +17,26 @@ public class StockModel implements iStockModel {
      * @param noOfShares        number of shares for given stock
      */
     public StockModel(String tickerSymbol, String name, int initialNoOfShares){
-        this.tickerSymbol = new SimpleStringProperty(tickerSymbol);
-        this.name = new SimpleStringProperty(name);
+        this.tickerSymbol = new String(tickerSymbol);
+        this.name = new String(name);
         this.initialNoOfShares = initialNoOfShares;
-        this.numShares = new SimpleIntegerProperty(initialNoOfShares);
-        this.lastKnownPrice = new SimpleDoubleProperty(-1);
-        this.value = new SimpleDoubleProperty(-1);
+        this.numShares = new Integer(initialNoOfShares);
+        this.lastKnownPrice = new Double(-1);
+        this.value = new Double(-1);
         refresh(); //this is called when a new stock is created and the refresh method will update lastknown price therefore initial price can be set to lastknown
-        initialBuyPrice = lastKnownPrice.get();
+        initialBuyPrice = lastKnownPrice;
     }
 
     public String getTickerSymbol() {
-        return tickerSymbol.get();
+        return tickerSymbol;
     }
 
     public String getName() {
-        return name.get();
+        return name;
     }
 
     public int getNumShares() {
-        return numShares.get();
+        return numShares;
     }
 
     public int getInitialNoOfShares() {
@@ -49,7 +44,7 @@ public class StockModel implements iStockModel {
     }
 
     public double getLastKnownPrice() {
-        return lastKnownPrice.get();
+        return lastKnownPrice;
     }
 
     public double getInitBuyPrice() {
@@ -57,11 +52,11 @@ public class StockModel implements iStockModel {
     }
 
     public double getValue() {
-        return value.get();
+        return value;
     }
 
     public void setValue(double value) {
-        this.value.set(value);
+        this.value=(value);
     }
 
     public double getInitValue() {
@@ -73,7 +68,7 @@ public class StockModel implements iStockModel {
      * @param numberOfShares    number of shares to increase by
      */
     public void buyShares(int amount){
-        numShares.set(numShares.get() + amount);
+        numShares = (numShares + amount);
         setValue(getNumShares()*getLastKnownPrice());
     }
 
@@ -82,10 +77,10 @@ public class StockModel implements iStockModel {
      * @return                  total value stock was sold at
      */
     public boolean sellShares(int amount){
-        if((numShares.get()-amount) < 0)
+        if((numShares - amount) < 0)
             return false;
 
-        numShares.set(numShares.get()-amount);
+        numShares = (numShares-amount);
         setValue(getNumShares()*getLastKnownPrice());
         return true;
     }
@@ -96,7 +91,7 @@ public class StockModel implements iStockModel {
      */
     public double estimateProfits(){
         refresh();
-        return value.get() - (initialBuyPrice * initialNoOfShares);
+        return value- (initialBuyPrice * initialNoOfShares);
     }
 
     //this may be a bit of a pain to do properly but can cheat by just checking if current value is more than initialValue
@@ -108,9 +103,10 @@ public class StockModel implements iStockModel {
     public StockModel refresh() {
         //deffo update lastKnownPrice, push change from here or pull changes from outside??
         try{
-            String value = StrathQuoteServer.getLastValue(tickerSymbol.get());
+            String value = StrathQuoteServer.getLastValue(tickerSymbol);
+            System.out.println("Hello " + value);
             value = value.replace(",", "");
-            lastKnownPrice.set( Double.parseDouble(value));
+            lastKnownPrice=( Double.parseDouble(value));
             setValue(getNumShares()*getLastKnownPrice());
             return this;    //this may cause an issue in the constructor but maybe not
         }catch(Model.WebsiteDataException | Model.NoSuchTickerException e){
