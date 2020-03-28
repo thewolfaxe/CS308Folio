@@ -89,12 +89,21 @@ public class EditStockPopup extends Application {
 
         popup.getChildren().addAll(portInfo, mainContent, buttons);
 
-        stage.setScene(new Scene(popup, 400, 200));
+        stage.setScene(new Scene(popup));
 
         PopupButtonHandler handler = new PopupButtonHandler(stock);
         apply.setOnMouseClicked(e -> {
-            int bought = (int) Integer.parseInt(buy_txt.getText());
-            int sold = (int) Integer.parseInt(sell_txt.getText());
+            int bought, sold;
+            try {
+                bought = (int) Integer.parseInt(buy_txt.getText());
+            }catch (NumberFormatException ex) {
+                bought = 0;
+            }
+            try {
+                sold = (int) Integer.parseInt(sell_txt.getText());
+            }catch (NumberFormatException ex) {
+                sold = 0;
+            }
             handler.editStockApply(bought, sold);
             stage.close();
         });
@@ -105,6 +114,7 @@ public class EditStockPopup extends Application {
 
         sellAll.setOnMouseClicked(e -> {
             handler.editStockApply(0, stock.getNumShares());
+            stage.close();
         });
 
         return stage;

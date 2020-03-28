@@ -1,11 +1,14 @@
 package View;
 
-import Controller.ButtonHandler;
 import Model.FolioModel;
 import Model.StockModel;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -14,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -32,7 +36,6 @@ public class Main extends Application {
         Menu fileMenu = new Menu("File");
         MenuItem menuItem1 = new MenuItem("New");
 
-
         fileMenu.getItems().add(menuItem1);
 
 
@@ -46,29 +49,30 @@ public class Main extends Application {
 //        folios.add(folioModel2);
         TabPane tabpane = new TabPane();
 
-        if(folios.size() == 0){
+        if (folios.size() == 0) {
             Tab tab1 = new Tab("*No Folio*");
             VBox tabContent = new VBox();
-            Insets s= new Insets(10,10,10,10);
+            Insets s = new Insets(10, 10, 10, 10);
             Label noFolio = new Label("No Folio open");
             tabContent.getChildren().add(noFolio);
             tab1.setContent(tabContent);
             tabpane.getTabs().add(tab1);
+            System.out.println("H");
 
         }
-        for(int i = 0; i < folios.size(); i++){
+        for (int i = 0; i < folios.size(); i++) {
 
             Tab tab1 = new Tab(folios.get(i).getName()); // Set folio tab name
 
             int finalI = i; // Needed for some reason
-            tab1.setOnCloseRequest(e->{ // On close delete it from the foilios arraylist
+            tab1.setOnCloseRequest(e -> { // On close delete it from the foilios arraylist
                 folios.remove(folios.get(finalI));
             });
             //we will need a new folioModel for each tab
 
             VBox tabContent = new VBox();
 
-            Insets s= new Insets(10,10,10,10);
+            Insets s = new Insets(10, 10, 10, 10);
 
             VBox newStocks = new VBox();
 
@@ -94,8 +98,9 @@ public class Main extends Application {
             newStocks.setSpacing(10);
             newStocks.setStyle("-fx-background-color:  rgba(0,0,0,0.3);");
             Button add = new Button("Add");
+            Button refresh = new Button("Refresh stock values");
 
-            newStocks.getChildren().addAll(nameStock, stockInfo, add);
+            newStocks.getChildren().addAll(nameStock, stockInfo, add, refresh);
             newStocks.setAlignment(Pos.CENTER);
 
             ObservableList<StockModel> stocks = FXCollections.observableArrayList();
@@ -130,30 +135,42 @@ public class Main extends Application {
             valueOfHolding.setCellValueFactory(new PropertyValueFactory<>("value"));
 
 
-
-
             table.getColumns().addAll(tickerSymbolColumn,
                     stockNameColumn,
                     numberSharesColumn,
                     pricePerShareColumn,
                     valueOfHolding);
-            tabContent.getChildren().addAll(newStocks,table);
+            tabContent.getChildren().addAll(newStocks, table);
 
 //        table.getItems().add(new StockModel("h", "h",0));
 
             tab1.setContent(tabContent);
-
             tabpane.getTabs().add(tab1); //add all probably
+            vBox.getChildren().add(tabpane);
 
-            ButtonHandler buttonHandler = new ButtonHandler(folios.get(i));
+            Controller.ButtonHandler buttonHandler = new Controller.ButtonHandler(folios.get(i));
+            Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(5), new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                    for (int i = 0; i < refreshedStocks.size(); i++) {
+                        stocks.set(i, refreshedStocks.get(i));
+                        System.out.println(refreshedStocks.get(i).getValue());
+                    }
+                    System.out.println("stocks refreshed");
+                }
+            }));
+
+            autoRefresh.setCycleCount(Timeline.INDEFINITE);
+            autoRefresh.play();
             add.setOnAction(a -> {
                 StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
-                if(stock != null) {
+                if (stock != null) {
                     stocks.add(stock);
                     name_txt.clear();
                     tickerSymbol_txt.clear();
                     numberShares_txt.clear();
-                }else {
+                } else {
                     Alert addedError = new Alert(Alert.AlertType.ERROR);
                     addedError.setTitle("Error");
                     addedError.setHeaderText("Error adding your stock");
@@ -166,7 +183,7 @@ public class Main extends Application {
             table.setRowFactory(a -> {
                 TableRow<StockModel> row = new TableRow<>();
                 row.setOnMouseClicked(e -> {
-                    if(e.getClickCount() == 2 && (!row.isEmpty())) {
+                    if (e.getClickCount() == 2 && (!row.isEmpty())) {
                         EditStockPopup popupEdit = new EditStockPopup(row.getItem(), folios.get(finalI).getName());
                         Stage popup = popupEdit.popup();
                         popup.showAndWait();
@@ -174,36 +191,37 @@ public class Main extends Application {
                 });
                 return row;
             });
+
+            refresh.setOnAction(a -> {
+                ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                for (int j = 0; j < refreshedStocks.size(); j++) {
+                    stocks.set(j, refreshedStocks.get(j));
+                }
+            });
+
+
         }
-        vBox.getChildren().add(tabpane);
+
+
+        vBox.getChildren().addAll(tabpane);
+
+//
+//            primaryStage.setScene(new Scene(vBox, 600, 600));
+//            primaryStage.show();
+//
+//
+
+
+//            vBox.getChildren().add(tabpane);
 
         System.out.println("HERE");
-
-
-
-
 
 
         primaryStage.setScene(new Scene(vBox, 600, 600));
         primaryStage.show();
 
 
-
-
-
-        menuItem1.setOnAction(e->{
-//            newPopup ep = new newPopup();
-//            try {
-//                ep.start(primaryStage);
-//                ep.wait(1000);
-//                String n = ep.folioName;
-//                System.out.println(n);
-//
-//                // https://o7planning.org/en/11537/javafx-textinputdialog-tutorial
-//
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
+        menuItem1.setOnAction(e -> {
             newDialog();
             try {
                 start(primaryStage);
@@ -232,11 +250,10 @@ public class Main extends Application {
 
         result.ifPresent(name -> {
             newPopupField = result.get();
-            if(folios.size()>0){
-                folios.add(new FolioModel(folios.get(folios.size()-1).getId()+1,newPopupField));
-            }
-            else{
-                folios.add(new FolioModel(0,newPopupField));
+            if (folios.size() > 0) {
+                folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
+            } else {
+                folios.add(new FolioModel(0, newPopupField));
 
             }
             System.out.println(folios.size());
@@ -247,4 +264,5 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }

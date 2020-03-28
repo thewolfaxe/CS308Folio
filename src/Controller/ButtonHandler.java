@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.StockModel;
+import javafx.collections.ObservableList;
 
 public class ButtonHandler {
     Model.FolioModel folioModel;
@@ -19,6 +20,14 @@ public class ButtonHandler {
 
         return folioModel.addStock(ticker, name, numShares);
 
+    }
+
+    public ObservableList<Model.StockModel> mainRefresh (ObservableList<Model.StockModel> stocks){
+        for (StockModel stock : stocks) {
+            System.out.println(stock.getLastKnownPrice());
+            stock.refresh();
+        }
+        return stocks;
     }
 
 }
