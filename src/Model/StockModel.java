@@ -1,14 +1,20 @@
 package Model;
 
-public class StockModel implements iStockModel {
+import java.io.Serializable;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableArray;
+
+public class StockModel implements iStockModel, Serializable {
 
     private String tickerSymbol;
     private String name;
-    private Integer numShares;
+    private int numShares;
     private int initialNoOfShares;
-    private Double lastKnownPrice;
+    private double lastKnownPrice;
     private double initialBuyPrice;
-    private Double value;
+    private double value;
 
     /*
      * Constructor for stock w/values
@@ -17,13 +23,21 @@ public class StockModel implements iStockModel {
      * @param noOfShares        number of shares for given stock
      */
     public StockModel(String tickerSymbol, String name, int initialNoOfShares){
-        this.tickerSymbol = new String(tickerSymbol);
-        this.name = new String(name);
+       /* this.tickerSymbol = new SimpleStringProperty(tickerSymbol);
+        this.name = new SimpleStringProperty(name);
         this.initialNoOfShares = initialNoOfShares;
-        this.numShares = initialNoOfShares;
-        this.lastKnownPrice = -1.0;
-        this.value = -1.0;
+        this.numShares = new SimpleIntegerProperty(initialNoOfShares);
+        this.lastKnownPrice = new SimpleDoubleProperty(-1);
+        this.value = new SimpleDoubleProperty(-1);
+        */
+    	this.tickerSymbol = tickerSymbol;
+    	this.name = name;
+    	this.initialNoOfShares = initialNoOfShares;
+    	this.numShares = initialNoOfShares;
+    	this.lastKnownPrice = -1;
+    	this.value = -1;
         refresh(); //this is called when a new stock is created and the refresh method will update lastknown price therefore initial price can be set to lastknown
+        //initialBuyPrice = lastKnownPrice.get();
         initialBuyPrice = lastKnownPrice;
     }
 

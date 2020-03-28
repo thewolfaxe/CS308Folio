@@ -209,19 +209,14 @@ public class Main extends Application {
             vBox.getChildren().addAll(tabpane);
         }
 
-//
-//            primaryStage.setScene(new Scene(vBox, 600, 600));
-//            primaryStage.show();
-//
-//
+//            vBox.getChildren().add(tabpane);
 
+        System.out.println("HERE");
 
 //            vBox.getChildren().add(tabpane);
 
-
         primaryStage.setScene(new Scene(vBox, 1000, 600));
         primaryStage.show();
-
 
         menuItem1.setOnAction(e -> {
             newDialog();
@@ -232,38 +227,38 @@ public class Main extends Application {
             }
             System.out.println(newPopupField.toString());
         });
+
+    }
+
+    private void getStocks() {
+        return;
     }
 
 
-        private void getStocks () {
-            return;
-        }
+    private void newDialog() {
 
+        TextInputDialog dialog = new TextInputDialog();
 
-        private void newDialog() {
+        dialog.setTitle("Enter new stock name");
+        dialog.setHeaderText("Enter stock name");
+        dialog.setContentText("Stock Name:");
 
-            TextInputDialog dialog = new TextInputDialog();
+        Optional<String> result = dialog.showAndWait();
 
-            dialog.setTitle("Enter new stock name");
-            dialog.setHeaderText("Enter stock name");
-            dialog.setContentText("Stock Name:");
+        result.ifPresent(name -> {
+            newPopupField = result.get();
+            if (folios.size() > 0) {
+                folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
+            } else {
+                folios.add(new FolioModel(0, newPopupField));
 
-            Optional<String> result = dialog.showAndWait();
+            }
+            System.out.println(folios.size());
 
-            result.ifPresent(name -> {
-                newPopupField = result.get();
-                if (folios.size() > 0) {
-                    folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
-                } else {
-                    folios.add(new FolioModel(0, newPopupField));
+        });
+    }
 
-                }
-                System.out.println(folios.size());
-
-            });
-        }
-
-        public static void main (String[]args){
-            launch(args);
-        }
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
