@@ -118,6 +118,7 @@ public class StockModel implements iStockModel, Serializable {
 
     //this may be a bit of a pain to do properly but can cheat by just checking if current value is more than initialValue
     public double checkTrend(){
+        refresh();
         return ((lastKnownPrice - initialBuyPrice)*(initialNoOfShares));     //return true if trend is increasing and false if it is decreasing
     }
 
