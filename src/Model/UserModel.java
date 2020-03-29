@@ -12,6 +12,10 @@ public UserModel(String username, ArrayList<iFolioModel> folios){
     this.folios = folios;
 }
 
+public List<iFolioModel> getFolios(){
+    return folios;
+}
+
 public String getUsername(){
     return username;
     }
