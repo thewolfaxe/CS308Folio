@@ -33,4 +33,14 @@ public class StockTests {
         testStockGood.buyShares(1);
         Assertions.assertTrue(testStockGood.getValue() > firstValue);
     }
+
+    @Test
+    public void checkTrendTest(){
+        Assertions.assertTrue(testStockGood.checkTrend() > 0 || testStockGood.checkTrend() == 0 || testStockGood.checkTrend() < 0);
+    }
+
+    @Test
+    public void estimateProfitsTest(){
+        Assertions.assertTrue(testStockGood.estimateProfits() > 0 || testStockGood.estimateProfits() == 0 || testStockGood.estimateProfits() < 0);
+    }
 }
