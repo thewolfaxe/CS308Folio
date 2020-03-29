@@ -1,5 +1,6 @@
 package View;
 
+import Controller.ButtonHandler;
 import Model.FolioModel;
 import Model.StockModel;
 import javafx.animation.KeyFrame;
@@ -7,13 +8,12 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -32,22 +32,12 @@ public class Main extends Application {
         primaryStage.setTitle("FolioTracker");
         VBox vBox = new VBox();
         VBox innerTab;
-
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
         MenuItem menuItem1 = new MenuItem("New");
-
         fileMenu.getItems().add(menuItem1);
-
-
         menuBar.getMenus().add(fileMenu);
-
-
         vBox.getChildren().add(menuBar);
-//        FolioModel folioModel = new FolioModel(1, "TestFolio1");
-//        FolioModel folioModel2 = new FolioModel(1, "TestFolio1");
-//        folios.add(folioModel);
-//        folios.add(folioModel2);
         TabPane tabpane = new TabPane();
 
         if (folios.size() == 0) {
@@ -60,32 +50,19 @@ public class Main extends Application {
             tabpane.getTabs().add(tab1);
             innerTab = new VBox();
             innerTab.getChildren().add(tabpane);
-            System.out.println("H");
         }else {
             innerTab = new VBox();
         }
         for (int i = 0; i < folios.size(); i++) {
             innerTab = new VBox();
-
-
             Tab tab1 = new Tab(folios.get(i).getName()); // Set folio tab name
-
             int finalI = i; // Needed for some reason
             tab1.setOnCloseRequest(e -> { // On close delete it from the foilios arraylist
                 folios.remove(folios.get(finalI));
             });
-            //we will need a new folioModel for each tab
-
             VBox tabContent = new VBox();
-
             Insets s = new Insets(10, 10, 10, 10);
-
             VBox newStocks = new VBox();
-
-//            nameStock.setSpacing(10);
-////        nameStock.setPadding(s);
-//            nameStock.setAlignment(Pos.CENTER);
-//            nameStock.getChildren().addAll(name, name_txt);
 
             HBox stockInfo = new HBox();
             HBox nameStock = new HBox();
@@ -95,10 +72,8 @@ public class Main extends Application {
             TextField tickerSymbol_txt = new TextField();
             Label numberShares = new Label("Number of Shares");
             TextField numberShares_txt = new TextField();
-//        stockInfo.setPadding(s);
             stockInfo.setSpacing(10);
             stockInfo.setAlignment(Pos.CENTER);
-
             newStocks.setPadding(s);
             newStocks.setSpacing(10);
             newStocks.setStyle("-fx-background-color:  rgba(0,0,0,0.3);");
@@ -111,12 +86,6 @@ public class Main extends Application {
 
             ObservableList<StockModel> stocks = FXCollections.observableArrayList(folios.get(i).getStocks());
 
-//        stocks = getStocks();
-//
-//            for(int j = 0; j<folios.get(i).getStocks().size(); j++){
-//                StockModel temp = folios.get(i).getStocks().get(j);
-//                stocks.add(temp);
-//            }
             TableView<StockModel> table = new TableView<>();
             table.setItems(stocks);
             table.setMinHeight(600 - newStocks.getHeight());
@@ -130,21 +99,17 @@ public class Main extends Application {
             stockNameColumn.setMinWidth(100);
             stockNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-
             TableColumn<StockModel, Integer> numberSharesColumn = new TableColumn<>("Number of Shares");
             numberSharesColumn.setMinWidth(100);
             numberSharesColumn.setCellValueFactory(new PropertyValueFactory<>("numShares"));
-
 
             TableColumn<StockModel, Double> pricePerShareColumn = new TableColumn<>("Price per Share");
             pricePerShareColumn.setMinWidth(100);
             pricePerShareColumn.setCellValueFactory(new PropertyValueFactory<>("lastKnownPrice"));
 
-
             TableColumn<StockModel, Double> valueOfHolding = new TableColumn<>("Value of Holding");
             valueOfHolding.setMinWidth(100);
             valueOfHolding.setCellValueFactory(new PropertyValueFactory<>("value"));
-
 
             table.getColumns().addAll(tickerSymbolColumn,
                     stockNameColumn,
@@ -153,45 +118,40 @@ public class Main extends Application {
                     valueOfHolding);
             tabContent.getChildren().addAll(newStocks, table);
 
-//        table.getItems().add(new StockModel("h", "h",0));
-
             tab1.setContent(tabContent);
             tabpane.getTabs().add(tab1); //add all probably
 
             Controller.ButtonHandler buttonHandler = new Controller.ButtonHandler(folios.get(i));
-            Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(10), new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
-                    for (int i = 0; i < refreshedStocks.size(); i++) {
-                        stocks.set(i, refreshedStocks.get(i));
-                        System.out.println(refreshedStocks.get(i).getValue());
-                    }
-                    System.out.println("stocks refreshed");
+            Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
+                ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                for (int i1 = 0; i1 < refreshedStocks.size(); i1++) {
+                    stocks.set(i1, refreshedStocks.get(i1));
+                    System.out.println(refreshedStocks.get(i1).getValue());
                 }
+                System.out.println("stocks refreshed");
             }));
 
             autoRefresh.setCycleCount(Timeline.INDEFINITE);
             autoRefresh.play();
-            int finalI1 = i;
-            add.setOnAction(a -> {
-                StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
-                if (stock != null) {
-                    if (stocks.contains(stock))
-                        stocks.set(stocks.indexOf(stock), stock);
-                    else
-                        stocks.add(stock);
-                    name_txt.clear();
-                    tickerSymbol_txt.clear();
-                    numberShares_txt.clear();
-                } else {
-                    Alert addedError = new Alert(Alert.AlertType.ERROR);
-                    addedError.setTitle("Error");
-                    addedError.setHeaderText("Error adding your stock");
-                    addedError.setContentText("Please make sure all the provided info is correct");
-                    System.out.println("Failed");
-                    addedError.showAndWait();
+
+
+            tickerSymbol_txt.setOnKeyPressed(a->{
+                if(a.getCode().equals(KeyCode.ENTER)){
+                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
                 }
+            });
+            numberShares_txt.setOnKeyPressed(a->{
+                if(a.getCode().equals(KeyCode.ENTER)){
+                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
+                }
+            });
+            name_txt.setOnKeyPressed(a ->{
+                if(a.getCode().equals(KeyCode.ENTER)){
+                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
+                }
+            });
+            add.setOnAction(a -> {
+                handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
             });
 
             refresh.setOnAction(a -> {
@@ -220,19 +180,9 @@ public class Main extends Application {
             innerTab.getChildren().addAll(tabpane);
         }
 
-//
-//            primaryStage.setScene(new Scene(vBox, 600, 600));
-//            primaryStage.show();
-//
-//
-
-            vBox.getChildren().add(innerTab);
-
-        System.out.println("HERE");
-
+        vBox.getChildren().add(innerTab);
         primaryStage.setScene(new Scene(vBox, 1000, 600));
         primaryStage.show();
-
 
         menuItem1.setOnAction(e -> {
             newDialog();
@@ -241,26 +191,37 @@ public class Main extends Application {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            System.out.println(newPopupField.toString());
         });
 
     }
 
-    private void getStocks() {
-        return;
+    private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<StockModel> stocks, ButtonHandler buttonHandler) {
+        StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
+        if (stock != null) {
+            if (stocks.contains(stock))
+                stocks.set(stocks.indexOf(stock), stock);
+            else
+                stocks.add(stock);
+            name_txt.clear();
+            tickerSymbol_txt.clear();
+            numberShares_txt.clear();
+        } else {
+            Alert addedError = new Alert(Alert.AlertType.ERROR);
+            addedError.setTitle("Error");
+            addedError.setHeaderText("Error adding your stock");
+            addedError.setContentText("Please make sure all the provided info is correct");
+            System.out.println("Failed");
+            addedError.showAndWait();
+        }
     }
-
 
     private void newDialog() {
 
         TextInputDialog dialog = new TextInputDialog();
-
         dialog.setTitle("Enter new stock name");
         dialog.setHeaderText("Enter stock name");
         dialog.setContentText("Stock Name:");
-
         Optional<String> result = dialog.showAndWait();
-
         result.ifPresent(name -> {
             newPopupField = result.get();
             if (folios.size() > 0) {
