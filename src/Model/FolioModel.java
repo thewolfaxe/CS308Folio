@@ -1,14 +1,6 @@
 package Model;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -96,6 +88,10 @@ public class FolioModel implements iFolioModel, Serializable {
             return newStock;
         }else
             return null;
+    }
+
+    public void addStock (StockModel s){
+        stocks.add(s);
     }
 
     public boolean deleteStock(String ticker) {

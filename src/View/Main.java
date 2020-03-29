@@ -109,9 +109,14 @@ public class Main extends Application {
             newStocks.getChildren().addAll(nameStock, stockInfo, refresh);
             newStocks.setAlignment(Pos.CENTER);
 
-            ObservableList<StockModel> stocks = FXCollections.observableArrayList();
-//        stocks = getStocks();
+            ObservableList<StockModel> stocks = FXCollections.observableArrayList(folios.get(i).getStocks());
 
+//        stocks = getStocks();
+//
+//            for(int j = 0; j<folios.get(i).getStocks().size(); j++){
+//                StockModel temp = folios.get(i).getStocks().get(j);
+//                stocks.add(temp);
+//            }
             TableView<StockModel> table = new TableView<>();
             table.setItems(stocks);
             table.setMinHeight(600 - newStocks.getHeight());
@@ -168,6 +173,7 @@ public class Main extends Application {
 
             autoRefresh.setCycleCount(Timeline.INDEFINITE);
             autoRefresh.play();
+            int finalI1 = i;
             add.setOnAction(a -> {
                 StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
                 if (stock != null) {
@@ -175,7 +181,6 @@ public class Main extends Application {
                         stocks.set(stocks.indexOf(stock), stock);
                     else
                         stocks.add(stock);
-
                     name_txt.clear();
                     tickerSymbol_txt.clear();
                     numberShares_txt.clear();
