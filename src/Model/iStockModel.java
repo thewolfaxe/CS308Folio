@@ -5,7 +5,7 @@ public interface iStockModel {
         void buyShares(int amount);
         boolean sellShares(int amount);
         double estimateProfits();
-        boolean checkTrend();
+        double checkTrend();
         StockModel refresh();
         String getTickerSymbol();
         String getName();
