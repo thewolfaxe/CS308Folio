@@ -48,7 +48,7 @@ public class EditStockPopup extends Application {
         Label ticker = new Label("Ticker: " + stock.getTickerSymbol());
         Label userName = new Label("Name: " + stock.getName());
 
-        Label initPrice = new Label("Initial value: " + stock.getInitBuyPrice());
+        Label initPrice = new Label("Initial price: " + stock.getInitBuyPrice());
         Label initShare = new Label("Initial shares: " + stock.getInitialNoOfShares());
         Label initValue = new Label("Initial Value: " + stock.getInitValue());
 

@@ -55,7 +55,7 @@ public class Main extends Application {
             tabpane.getTabs().add(tab1);
             innerTab = new VBox();
             innerTab.getChildren().add(tabpane);
-        }else {
+        } else {
             innerTab = new VBox();
         }
         for (int i = 0; i < folios.size(); i++) {
@@ -121,28 +121,24 @@ public class Main extends Application {
             change.setCellValueFactory(new PropertyValueFactory<>("trend"));
 
             int finalI1 = i;
-            change.setCellFactory(a->{
-                TableCell<StockModel, Double> cell2 = new TableCell<StockModel, Double>() {
+            change.setCellFactory(a -> new TableCell<StockModel, Double>() {
 
                 @Override
                 public void updateItem(Double item, boolean empty) {
                     super.updateItem(item, false);
-                    if (item!=null) {
+                    if (item != null) {
                         double num = Math.round(item * 100);
-                        num = num/100;
+                        num = num / 100;
                         this.setText(Double.toString(num));
-                        if(num<0){
+                        if (num < 0) {
                             this.setBackground(new Background(new BackgroundFill(Color.RED,
                                     null, null)));
-                        }
-                        else{
+                        } else {
                             this.setBackground(new Background(new BackgroundFill(Color.GREEN,
                                     null, null)));
                         }
                     }
                 }
-            };
-                return cell2;
             });
 
             table.getColumns().addAll(tickerSymbolColumn,
@@ -157,12 +153,11 @@ public class Main extends Application {
             tabpane.getTabs().add(tab1); //add all probably
 
             ButtonHandler buttonHandler = new ButtonHandler(folios.get(i));
-            Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
+
+            Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(60), actionEvent -> {
+                System.out.println("\nRefreshing stonks");
                 ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
-                for (int i1 = 0; i1 < refreshedStocks.size(); i1++) {
-                    stocks.set(i1, refreshedStocks.get(i1));
-                    System.out.println(refreshedStocks.get(i1).getValue());
-                }
+                table.setItems(refreshedStocks);
                 System.out.println("stocks refreshed");
             }));
 
@@ -170,18 +165,18 @@ public class Main extends Application {
             autoRefresh.play();
 
 
-            tickerSymbol_txt.setOnKeyPressed(a->{
-                if(a.getCode().equals(KeyCode.ENTER)){
+            tickerSymbol_txt.setOnKeyPressed(a -> {
+                if (a.getCode().equals(KeyCode.ENTER)) {
                     handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
                 }
             });
-            numberShares_txt.setOnKeyPressed(a->{
-                if(a.getCode().equals(KeyCode.ENTER)){
+            numberShares_txt.setOnKeyPressed(a -> {
+                if (a.getCode().equals(KeyCode.ENTER)) {
                     handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
                 }
             });
-            name_txt.setOnKeyPressed(a ->{
-                if(a.getCode().equals(KeyCode.ENTER)){
+            name_txt.setOnKeyPressed(a -> {
+                if (a.getCode().equals(KeyCode.ENTER)) {
                     handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
                 }
             });
@@ -204,9 +199,11 @@ public class Main extends Application {
                         Stage popup = popupEdit.popup();
                         popup.showAndWait();
                     }
-                    ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
-                    for (int j = 0; j < refreshedStocks.size(); j++) {
-                        stocks.set(j, refreshedStocks.get(j));
+                    if (!row.isEmpty()) {
+                        StockModel refreshedStock = buttonHandler.soloRefresh(row.getItem());
+                        if (refreshedStock != null)
+                            if (stocks.contains(refreshedStock))
+                                stocks.set(stocks.indexOf(refreshedStock), refreshedStock);
                     }
                 });
                 return row;

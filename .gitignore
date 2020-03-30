@@ -76,4 +76,5 @@ fabric.properties
 
 mods/*
 .idea/compiler.xml
+lib
 

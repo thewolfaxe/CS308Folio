@@ -1,122 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Diagram>
   <ID>JAVA</ID>
-  <OriginalElement>model</OriginalElement>
-  <nodes>
-    <node x="439.7238888888889" y="1024.0">model.iUserModel</node>
-    <node x="354.0572222222222" y="1266.0">model.UserModel</node>
-    <node x="770.723888888889" y="290.0">model.testClass</node>
-    <node x="20.0" y="959.0">model.FolioModel</node>
-    <node x="243.58499999999998" y="726.0">model.iFolioModel</node>
-    <node x="697.723888888889" y="79.0">model.StrathQuoteServer</node>
-    <node x="3.2596308778686307" y="369.6003851709196">model.StockModel</node>
-    <node x="233.625" y="427.0">model.iStockModel</node>
-    <node x="701.723888888889" y="0.0">model.WebsiteDataException</node>
-    <node x="963.723888888889" y="0.0">model.NoSuchTickerException</node>
-  </nodes>
+  <OriginalElement />
+  <nodes />
   <notes />
-  <edges>
-    <edge source="model.FolioModel" target="model.FolioModel">
-      <point x="0.0" y="123.5" />
-      <point x="197.0" y="1226.0" />
-      <point x="0.0" y="1226.0" />
-      <point x="0.0" y="1082.5" />
-      <point x="-177.0" y="-0.0" />
-    </edge>
-    <edge source="model.iUserModel" target="model.iFolioModel">
-      <point x="0.0" y="-58.5" />
-      <point x="536.223888888889" y="939.0" />
-      <point x="553.335" y="939.0" />
-      <point x="132.75" y="91.5" />
-    </edge>
-    <edge source="model.iStockModel" target="model.StockModel">
-      <point x="-45.25" y="-124.5" />
-      <point x="278.875" y="407.0" />
-      <point x="249.04333333333332" y="407.0" />
-      <point x="45.25000000000003" y="178.5" />
-    </edge>
-    <edge source="model.UserModel" target="model.UserModel">
-      <point x="0.0" y="79.5" />
-      <point x="450.5572222222222" y="1445.0" />
-      <point x="334.0572222222222" y="1445.0" />
-      <point x="334.0572222222222" y="1345.5" />
-      <point x="-96.5" y="-0.0" />
-    </edge>
-    <edge source="model.StrathQuoteServer" target="model.StrathQuoteServer">
-      <point x="-49.0" y="80.5" />
-      <point x="746.723888888889" y="260.0" />
-      <point x="677.723888888889" y="260.0" />
-      <point x="677.723888888889" y="159.5" />
-      <point x="-98.0" y="-0.0" />
-    </edge>
-    <edge source="model.testClass" target="model.StrathQuoteServer">
-      <point x="0.0" y="-26.5" />
-      <point x="49.0" y="80.5" />
-    </edge>
-    <edge source="model.iFolioModel" target="model.iStockModel">
-      <point x="0.0" y="-91.5" />
-      <point x="420.585" y="701.0" />
-      <point x="369.375" y="701.0" />
-      <point x="45.25" y="124.5" />
-    </edge>
-    <edge source="model.FolioModel" target="model.StockModel">
-      <point x="-70.80000000000004" y="-123.5" />
-      <point x="126.19999999999996" y="939.0" />
-      <point x="184.72388888888887" y="939.0" />
-      <point x="184.72388888888887" y="407.0" />
-      <point x="188.70999999999995" y="407.0" />
-      <point x="-15.083333333333343" y="178.5" />
-    </edge>
-    <edge source="model.FolioModel" target="model.iFolioModel">
-      <point x="141.60000000000002" y="-123.5" />
-      <point x="338.6" y="939.0" />
-      <point x="287.835" y="939.0" />
-      <point x="-132.75" y="91.5" />
-    </edge>
-    <edge source="model.UserModel" target="model.iUserModel">
-      <point x="64.33333333333337" y="-79.5" />
-      <point x="514.8905555555556" y="1246.0" />
-      <point x="536.223888888889" y="1246.0" />
-      <point x="0.0" y="58.5" />
-    </edge>
-    <edge source="model.FolioModel" target="model.iStockModel">
-      <point x="70.79999999999995" y="-123.5" />
-      <point x="267.79999999999995" y="939.0" />
-      <point x="210.58166666666665" y="939.0" />
-      <point x="210.58166666666665" y="701.0" />
-      <point x="278.875" y="701.0" />
-      <point x="-45.25" y="124.5" />
-    </edge>
-    <edge source="model.StockModel" target="model.StockModel">
-      <point x="-75.41666666666669" y="178.5" />
-      <point x="128.3766666666666" y="377.0" />
-      <point x="93.2933333333333" y="377.0" />
-      <point x="93.2933333333333" y="178.5" />
-      <point x="-90.5" y="-0.0" />
-    </edge>
-    <edge source="model.UserModel" target="model.iFolioModel">
-      <point x="0.0" y="-79.5" />
-      <point x="450.5572222222222" y="1246.0" />
-      <point x="429.22388888888884" y="1246.0" />
-      <point x="429.22388888888884" y="939.0" />
-      <point x="464.835" y="939.0" />
-      <point x="44.25" y="91.5" />
-    </edge>
-    <edge source="model.StockModel" target="model.iStockModel">
-      <point x="75.41666666666666" y="178.5" />
-      <point x="279.2099999999999" y="397.0" />
-      <point x="369.375" y="397.0" />
-      <point x="45.24999999999999" y="-124.5" />
-    </edge>
-    <edge source="model.StrathQuoteServer" target="model.WebsiteDataException">
-      <point x="0.0" y="-80.5" />
-      <point x="0.0" y="14.5" />
-    </edge>
-  </edges>
-  <settings layout="Hierarchic Group" zoom="0.7088737201365187" x="628.9654282651546" y="609.1670678863746" />
-  <SelectedNodes>
-    <node>model.StockModel</node>
-  </SelectedNodes>
+  <edges />
+  <settings layout="Hierarchic Group" zoom="0.7088737201365187" x="629.0" y="609.0" />
+  <SelectedNodes />
   <Categories>
     <Category>Fields</Category>
     <Category>Methods</Category>

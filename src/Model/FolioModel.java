@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class FolioModel implements iFolioModel, Serializable {
-    
-	private static final long serialversionUID = 123456789L; 
-	
+
+    private static final long serialversionUID = 123456789L;
+
     private int id;
     private String name;
     private ArrayList<StockModel> stocks;
@@ -18,55 +18,55 @@ public class FolioModel implements iFolioModel, Serializable {
         this.name = name;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
     public void refreshStocks() {
-        for(StockModel stock: stocks) {
-            stock.refresh();    
+        for (StockModel stock : stocks) {
+            stock.refresh();
         }
     }
 
     public ArrayList<StockModel> getStocks() {
         return stocks;
     }
-    
+
     public ArrayList<StockModel> sort(int sortCode, boolean ascending) {
-        if(sortCode < 0 || sortCode > 4) return null; //view must check this doesnt return null
-        switch(sortCode){
+        if (sortCode < 0 || sortCode > 4) return null; //view must check this doesnt return null
+        switch (sortCode) {
             case 0: //sort by ticker
-                if(!ascending){
+                if (!ascending) {
                     stocks.sort(Comparator.comparing(StockModel::getTickerSymbol));
-                }else{
+                } else {
                     stocks.sort(Comparator.comparing(StockModel::getTickerSymbol).reversed());
                 }
                 break;
             case 1: //sort by name
-                if(!ascending){
+                if (!ascending) {
                     stocks.sort(Comparator.comparing(StockModel::getName));
-                }else{
+                } else {
                     stocks.sort(Comparator.comparing(StockModel::getName).reversed());
                 }
                 break;
             case 2: //sort by no shares
-                if(!ascending){
+                if (!ascending) {
                     stocks.sort(Comparator.comparingInt(StockModel::getNumShares));
-                }else{
+                } else {
                     stocks.sort(Comparator.comparingInt(StockModel::getNumShares).reversed());
                 }
                 break;
             case 3: //sort by price per share
-                if(!ascending){
+                if (!ascending) {
                     stocks.sort(Comparator.comparingDouble(StockModel::getLastKnownPrice));
-                }else{
+                } else {
                     stocks.sort(Comparator.comparingDouble(StockModel::getLastKnownPrice).reversed());
                 }
                 break;
             case 4: //sort by value
-                if(!ascending){
+                if (!ascending) {
                     stocks.sort(Comparator.comparingDouble(StockModel::getValue));
-                }else{
+                } else {
                     stocks.sort(Comparator.comparingDouble(StockModel::getValue).reversed());
                 }
                 break;
@@ -74,9 +74,9 @@ public class FolioModel implements iFolioModel, Serializable {
         return stocks;
     }
 
-    public StockModel addStock(String ticker, String name, int shares){
-        for(StockModel stock: stocks) {
-            if(stock.getTickerSymbol().equals(ticker)) {
+    public StockModel addStock(String ticker, String name, int shares) {
+        for (StockModel stock : stocks) {
+            if (stock.getTickerSymbol().equals(ticker)) {
                 stock.buyShares(shares);
                 return stock;
             }
@@ -86,66 +86,66 @@ public class FolioModel implements iFolioModel, Serializable {
         if (newStock.refresh() != null) {
             stocks.add(newStock);
             return newStock;
-        }else
+        } else
             return null;
     }
 
-    public void addStock (StockModel s){
+    public void addStock(StockModel s) {
         stocks.add(s);
     }
 
     public boolean deleteStock(String ticker) {
-       for(int i=0;i<stocks.size();i++){
-           if(stocks.get(i).getTickerSymbol().equals(ticker)){
-               stocks.remove(i);
-               return true;
-           }
-       }
+        for (int i = 0; i < stocks.size(); i++) {
+            if (stocks.get(i).getTickerSymbol().equals(ticker)) {
+                stocks.remove(i);
+                return true;
+            }
+        }
         return false; //false if the stock doesnt exist
     }
 
     public double getFolioValue() {
         double val = 0;
         for (StockModel stock : stocks) {
-            stock.refresh();
+//            stock.refresh();
             val += stock.getValue();
         }
         return val;
     }
 
     public boolean save(String path) { //this takes just a path, no filename
-    	path += this.name + ".ser";
-    	try {
-    		FileOutputStream file = new FileOutputStream(path); 
-            ObjectOutputStream out = new ObjectOutputStream(file); 
-            out.writeObject(this); 
-            out.close(); 
-            file.close(); 
-            System.out.println("Folio has been saved"); 
-           return true;
-    	}catch(IOException e) {
+        path += this.name + ".ser";
+        try {
+            FileOutputStream file = new FileOutputStream(path);
+            ObjectOutputStream out = new ObjectOutputStream(file);
+            out.writeObject(this);
+            out.close();
+            file.close();
+            System.out.println("Folio has been saved");
+            return true;
+        } catch (IOException e) {
             System.out.println("Failed: " + e);
-    		return false;
-    	}
-    	
+            return false;
+        }
+
     }
-    
+
     public static FolioModel load(String path) { //this takes full path to file. View must check for null returns
-    	try { 
-            FileInputStream file = new FileInputStream(path); 
-            ObjectInputStream in = new ObjectInputStream(file); 
-            Object object = (FolioModel)in.readObject(); 
-            in.close(); 
-            file.close(); 
-            System.out.println("Folio has been loaded"); 
+        try {
+            FileInputStream file = new FileInputStream(path);
+            ObjectInputStream in = new ObjectInputStream(file);
+            Object object = (FolioModel) in.readObject();
+            in.close();
+            file.close();
+            System.out.println("Folio has been loaded");
             return (FolioModel) object;
-        }catch (IOException ex) { 
-            System.out.println("IOException is caught"); 
+        } catch (IOException ex) {
+            System.out.println("IOException is caught");
             return null;
-        }catch (ClassNotFoundException ex) { 
-            System.out.println("ClassNotFoundException" + " is caught"); 
+        } catch (ClassNotFoundException ex) {
+            System.out.println("ClassNotFoundException" + " is caught");
             return null;
-        } 
+        }
     }
     /*
     public boolean save(String pathFile){
@@ -174,8 +174,8 @@ public class FolioModel implements iFolioModel, Serializable {
         }
         return true;
     } */
-  
-    
+
+
     public int getId() {
         return id;
     }

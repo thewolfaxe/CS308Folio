@@ -113,13 +113,13 @@ public class StockModel implements iStockModel, Serializable {
      * @return                  estimated profit
      */
     public double estimateProfits(){
-        refresh();
+//        refresh();
         return value - (initialBuyPrice * initialNoOfShares);
     }
 
     //this may be a bit of a pain to do properly but can cheat by just checking if current value is more than initialValue
     public double getTrend(){
-        refresh();
+//        refresh();
         return ((lastKnownPrice - initialBuyPrice)*(initialNoOfShares));     //return true if trend is increasing and false if it is decreasing
     }
 
@@ -131,9 +131,13 @@ public class StockModel implements iStockModel, Serializable {
             value = value.replace(",", "");
             lastKnownPrice = Double.parseDouble(value);
             setValue(getNumShares()*getLastKnownPrice());
+            System.out.println("In stock refresh: " + lastKnownPrice);
             return this;    //this may cause an issue in the constructor but maybe not
         }catch(WebsiteDataException | NoSuchTickerException e){
             System.out.println("failed: " + e);
+            return null;
+        }catch (Exception e) {
+            System.out.println("I done fucked up");
             return null;
         }
         

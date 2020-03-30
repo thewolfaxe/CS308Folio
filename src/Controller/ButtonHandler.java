@@ -19,20 +19,20 @@ public class ButtonHandler {
             return null;
         }
 
-        ArrayList<StockModel> stocks = folioModel.getStocks();
-
-
-
         return folioModel.addStock(ticker, name, numShares);
 
     }
 
     public ObservableList<Model.StockModel> mainRefresh (ObservableList<Model.StockModel> stocks){
         for (StockModel stock : stocks) {
-            System.out.println(stock.getLastKnownPrice());
+            System.out.println("Main refresh: " + stock.getLastKnownPrice());
             stock.refresh();
         }
         return stocks;
+    }
+
+    public StockModel soloRefresh(StockModel stock) {
+        return stock.refresh();
     }
 
 }
