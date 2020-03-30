@@ -1,10 +1,11 @@
 package Model;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableArray;
 
 public class StockModel implements iStockModel, Serializable {
 
@@ -117,7 +118,7 @@ public class StockModel implements iStockModel, Serializable {
     }
 
     //this may be a bit of a pain to do properly but can cheat by just checking if current value is more than initialValue
-    public double checkTrend(){
+    public double getTrend(){
         refresh();
         return ((lastKnownPrice - initialBuyPrice)*(initialNoOfShares));     //return true if trend is increasing and false if it is decreasing
     }
@@ -136,5 +137,16 @@ public class StockModel implements iStockModel, Serializable {
             return null;
         }
         
+    }
+
+    public ImageView getChange() throws FileNotFoundException {
+        FileInputStream up = new FileInputStream("up.png");
+        FileInputStream down = new FileInputStream("down.png");
+
+        if((getValue()-getInitValue()) >= 0){
+            return new ImageView(new Image(up));
+        }
+        System.out.println("GOING DOWNNNNNNNNNNNNNNNNNNNNNNN");
+        return new ImageView(new Image(down));
     }
 }

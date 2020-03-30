@@ -14,8 +14,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -92,7 +95,7 @@ public class Main extends Application {
             table.setEditable(false); //for now
 
             TableColumn<StockModel, String> tickerSymbolColumn = new TableColumn<>("Ticker Symbol");
-            tickerSymbolColumn.setMinWidth(100);
+            tickerSymbolColumn.setMinWidth(200);
             tickerSymbolColumn.setCellValueFactory(new PropertyValueFactory<>("tickerSymbol"));
 
             TableColumn<StockModel, String> stockNameColumn = new TableColumn<>("Stock Name");
@@ -111,17 +114,47 @@ public class Main extends Application {
             valueOfHolding.setMinWidth(100);
             valueOfHolding.setCellValueFactory(new PropertyValueFactory<>("value"));
 
+            TableColumn<StockModel, Double> change = new TableColumn<>("Trend");
+            change.setMinWidth(100);
+            change.setCellValueFactory(new PropertyValueFactory<>("trend"));
+
+            int finalI1 = i;
+            change.setCellFactory(a->{
+                TableCell<StockModel, Double> cell2 = new TableCell<StockModel, Double>() {
+
+                @Override
+                public void updateItem(Double item, boolean empty) {
+                    super.updateItem(item, false);
+                    if (item!=null) {
+                        double num = Math.round(item * 100);
+                        num = num/100;
+                        this.setText(Double.toString(num));
+                        if(num<0){
+                            this.setBackground(new Background(new BackgroundFill(Color.RED,
+                                    null, null)));
+                        }
+                        else{
+                            this.setBackground(new Background(new BackgroundFill(Color.GREEN,
+                                    null, null)));
+                        }
+                    }
+                }
+            };
+                return cell2;
+            });
+
             table.getColumns().addAll(tickerSymbolColumn,
                     stockNameColumn,
                     numberSharesColumn,
                     pricePerShareColumn,
-                    valueOfHolding);
+                    valueOfHolding,
+                    change);
             tabContent.getChildren().addAll(newStocks, table);
 
             tab1.setContent(tabContent);
             tabpane.getTabs().add(tab1); //add all probably
 
-            Controller.ButtonHandler buttonHandler = new Controller.ButtonHandler(folios.get(i));
+            ButtonHandler buttonHandler = new ButtonHandler(folios.get(i));
             Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
                 ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
                 for (int i1 = 0; i1 < refreshedStocks.size(); i1++) {
@@ -155,7 +188,7 @@ public class Main extends Application {
             });
 
             refresh.setOnAction(a -> {
-                ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
                 for (int j = 0; j < refreshedStocks.size(); j++) {
                     stocks.set(j, refreshedStocks.get(j));
                 }
@@ -169,7 +202,7 @@ public class Main extends Application {
                         Stage popup = popupEdit.popup();
                         popup.showAndWait();
                     }
-                    ObservableList<Model.StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                    ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
                     for (int j = 0; j < refreshedStocks.size(); j++) {
                         stocks.set(j, refreshedStocks.get(j));
                     }
