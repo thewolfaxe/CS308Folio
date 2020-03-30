@@ -14,6 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
@@ -217,6 +219,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(vBox, 1000, 600));
         primaryStage.show();
 
+        menuItem1.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
         menuItem1.setOnAction(e -> {
             newDialog();
             try {
@@ -225,6 +228,7 @@ public class Main extends Application {
                 ex.printStackTrace();
             }
         });
+
 
     }
 
