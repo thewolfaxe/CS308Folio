@@ -55,7 +55,7 @@ public class FolioTests {
 
     @Test
     public void saveTestGoodPath(){
-        Assertions.assertTrue(testFolio.save(""));
+        Assertions.assertTrue(testFolio.save("test.ser"));
     }
 
     @Test
