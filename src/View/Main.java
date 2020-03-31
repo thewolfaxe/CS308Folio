@@ -6,8 +6,10 @@ import Model.StockModel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -153,17 +155,23 @@ public class Main extends Application {
             tabpane.getTabs().add(tab1); //add all probably
 
             ButtonHandler buttonHandler = new ButtonHandler(folios.get(i));
+            Task<Void> refreshThread = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    try{
+                        Thread.sleep(10000);
+                    }
+                    catch (Exception exc){}
+                    Platform.runLater(()-> {
+                        Timeline autoRefresh = autoRefresh(stocks, table, buttonHandler);
+                        autoRefresh.setCycleCount(Timeline.INDEFINITE);
+                        autoRefresh.play();
+                    });
+                    return null;
+                }
+            };
 
-            Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(60), actionEvent -> {
-                System.out.println("\nRefreshing stonks");
-                ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
-                table.setItems(refreshedStocks);
-                System.out.println("stocks refreshed");
-            }));
-
-            autoRefresh.setCycleCount(Timeline.INDEFINITE);
-            autoRefresh.play();
-
+            new Thread(refreshThread).start();
 
             tickerSymbol_txt.setOnKeyPressed(a -> {
                 if (a.getCode().equals(KeyCode.ENTER)) {
@@ -227,6 +235,17 @@ public class Main extends Application {
         });
 
 
+    }
+
+
+
+    private Timeline autoRefresh(ObservableList<StockModel> stocks, TableView<StockModel> table, ButtonHandler buttonHandler) {
+        return new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
+                    System.out.println("\nRefreshing stonks");
+                    ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                    table.setItems(refreshedStocks);
+                    System.out.println("stocks refreshed");
+                }));
     }
 
     private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<StockModel> stocks, ButtonHandler buttonHandler) {
