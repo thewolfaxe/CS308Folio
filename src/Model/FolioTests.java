@@ -65,9 +65,10 @@ public class FolioTests {
 
     @Test
     public void loadTestBadPath(){
+        FolioModel folio = new FolioModel(1, "bob");
         File file = new File("test.ser");
         file.delete();
-        Assertions.assertNull(FolioModel.load("sdads"));
+        Assertions.assertNull(folio.load("sdads"));
     }
 
     @Test

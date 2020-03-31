@@ -56,7 +56,7 @@ public class EditStockPopup extends Application {
         Label cNumShares = new Label("Current number of shares: " + stock.getNumShares());
         Label cValue = new Label("Current value: " + stock.getValue());
 
-        Label totGain = new Label("Total gain: " + (stock.getValue()-stock.getInitValue()));
+        Label totGain = new Label("Total gain: " + stock.getGain());
 
         Label sell = new Label("Sell: ");
         TextField sell_txt = new TextField();

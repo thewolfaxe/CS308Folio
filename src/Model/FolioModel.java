@@ -18,6 +18,8 @@ public class FolioModel implements iFolioModel, Serializable {
         this.name = name;
     }
 
+    public FolioModel() {}
+
     public String getName() {
         return name;
     }
@@ -114,7 +116,7 @@ public class FolioModel implements iFolioModel, Serializable {
     }
 
     public boolean save(String path) { //this takes just a path, no filename
-        path += this.name + ".ser";
+//        path += this.name + ".ser";
         try {
             FileOutputStream file = new FileOutputStream(path);
             ObjectOutputStream out = new ObjectOutputStream(file);
@@ -134,13 +136,14 @@ public class FolioModel implements iFolioModel, Serializable {
         try {
             FileInputStream file = new FileInputStream(path);
             ObjectInputStream in = new ObjectInputStream(file);
-            Object object = (FolioModel) in.readObject();
+            FolioModel object = (FolioModel) in.readObject();
             in.close();
             file.close();
             System.out.println("Folio has been loaded");
             return (FolioModel) object;
         } catch (IOException ex) {
             System.out.println("IOException is caught");
+            ex.printStackTrace();
             return null;
         } catch (ClassNotFoundException ex) {
             System.out.println("ClassNotFoundException" + " is caught");

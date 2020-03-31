@@ -136,11 +136,11 @@ public class Main extends Application {
                         double num = Math.round(item * 100);
                         num = num / 100;
                         if (num < 0) {
-                            this.setText("- " + Double.toString(num));
+                            this.setText(Double.toString(num));
                             this.setBackground(new Background(new BackgroundFill(Color.RED,
                                     null, null)));
                         } else {
-                            this.setText("+ " + Double.toString(num));
+                            this.setText(Double.toString(num));
                             this.setBackground(new Background(new BackgroundFill(Color.GREEN,
                                     null, null)));
                         }
@@ -174,11 +174,11 @@ public class Main extends Application {
             Task<Void> refreshThread = new Task<>() {
                 @Override
                 protected Void call() throws Exception {
-                    try{
+                    try {
                         Thread.sleep(10000);
+                    } catch (Exception exc) {
                     }
-                    catch (Exception exc){}
-                    Platform.runLater(()-> {
+                    Platform.runLater(() -> {
                         Timeline autoRefresh = autoRefresh(stocks, table, buttonHandler);
                         autoRefresh.setCycleCount(Timeline.INDEFINITE);
                         autoRefresh.play();
@@ -250,19 +250,18 @@ public class Main extends Application {
             }
         });
 
-        menuSave.setOnAction(e ->{
-            if(folios.size()>0){
+        menuSave.setOnAction(e -> {
+            if (folios.size() > 0) {
                 FileChooser fc = new FileChooser();
                 fc.setTitle("Save Folio");
-                fc.getExtensionFilters().add( new FileChooser.ExtensionFilter("FOLIO files (*.folio)", "*.folio"));
+                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("FOLIO files (*.folio)", "*.folio"));
                 File file = fc.showSaveDialog(primaryStage);
 
-                if(file != null){
+                if (file != null) {
                     System.out.println(tabpane.getSelectionModel().getSelectedIndex());
                     folios.get(tabpane.getSelectionModel().getSelectedIndex()).save(file.toString());
                 }
-            }
-            else{
+            } else {
                 Alert error = new Alert(Alert.AlertType.ERROR);
                 error.setTitle("No Folio open");
                 error.setHeaderText("No Folio open");
@@ -271,28 +270,42 @@ public class Main extends Application {
             }
         });
 
-        menuLoad.setOnAction(e->{
+        menuLoad.setOnAction(e -> {
             FileChooser fc = new FileChooser();
             fc.setTitle("Load Folio");
             File file = fc.showOpenDialog(primaryStage);
-            if(file != null){
-                folios.add(new FolioModel(1, "new").load(file.toString()));
+            if (file != null) {
+                FolioModel loadedFolio = FolioModel.load(file.toString());
+                if(loadedFolio != null) {
+                    folios.add(FolioModel.load(file.toString()));
+                    try {
+                        start(primaryStage);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return;
+                }
             }
-            try {
-                start(primaryStage);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+
+                Alert addedError = new Alert(Alert.AlertType.ERROR);
+                addedError.setTitle("Error");
+                addedError.setHeaderText("Error loading your folio");
+                addedError.setContentText("Please make sure you have selected the correct file");
+                System.out.println("Failed to load file");
+                addedError.showAndWait();
+
         });
     }
 
     private Timeline autoRefresh(ObservableList<StockModel> stocks, TableView<StockModel> table, ButtonHandler buttonHandler) {
         return new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
-                    System.out.println("\nRefreshing stonks");
-                    ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
-                    table.setItems(refreshedStocks);
-                    System.out.println("stocks refreshed");
-                }));
+            System.out.println("\nRefreshing stonks");
+            ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+            for (int j = 0; j < refreshedStocks.size(); j++) {
+                stocks.set(j, refreshedStocks.get(j));
+            }
+            System.out.println("stocks refreshed");
+        }));
     }
 
     private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<StockModel> stocks, ButtonHandler buttonHandler) {

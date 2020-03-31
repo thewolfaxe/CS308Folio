@@ -18,6 +18,7 @@ public class StockModel implements iStockModel, Serializable {
     private double value;
     private double high;
     private double low;
+    private double soldStockValue;
 
     /*
      * Constructor for stock w/values
@@ -41,6 +42,7 @@ public class StockModel implements iStockModel, Serializable {
     	this.value = -1;
     	high = Double.NEGATIVE_INFINITY;
     	low = Double.POSITIVE_INFINITY;
+    	this.soldStockValue = 0;
         refresh(); //this is called when a new stock is created and the refresh method will update lastknown price therefore initial price can be set to lastknown
         //initialBuyPrice = lastKnownPrice.get();
         initialBuyPrice = lastKnownPrice;
@@ -62,15 +64,17 @@ public class StockModel implements iStockModel, Serializable {
     }
 
     public double getHigh(){
-        double h = Math.round(high) * 100;
-        h/=100;
-        return h;
+//        double h = Math.round(high) * 100;
+//        h/=100;
+//        return h;
+        return low;
     }
 
     public double getLow(){
-        double l = Math.round(low) * 100;
-        l/=100;
-        return l;
+//        double l = Math.round(low) * 100;
+//        l/=100;
+//        return l;
+        return low;
     }
 
     public int getInitialNoOfShares() {
@@ -118,7 +122,7 @@ public class StockModel implements iStockModel, Serializable {
         if((numShares - amount) < 0)
             return false;
 
-       
+       soldStockValue += amount*lastKnownPrice;
         numShares -= amount;
         setValue(getNumShares()*getLastKnownPrice());
         return true;
@@ -137,6 +141,17 @@ public class StockModel implements iStockModel, Serializable {
     public double getTrend(){
 //        refresh();
         return ((lastKnownPrice - initialBuyPrice)*(initialNoOfShares));     //return true if trend is increasing and false if it is decreasing
+    }
+
+    public double getInitialInvestment() {
+        return initialBuyPrice*initialNoOfShares;
+    }
+
+    public double getGain() {
+        double gaiins = getValue() + soldStockValue - getInitialInvestment();
+        System.out.println(soldStockValue);
+        System.out.println(gaiins);
+        return gaiins;
     }
 
     //this needs to pull fresh values from the stock market and update local values
