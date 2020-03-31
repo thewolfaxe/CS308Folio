@@ -23,9 +23,11 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -41,8 +43,10 @@ public class Main extends Application {
         VBox innerTab;
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
-        MenuItem menuItem1 = new MenuItem("New");
-        fileMenu.getItems().add(menuItem1);
+        MenuItem menuNew = new MenuItem("New");
+        MenuItem menuSave = new MenuItem("Save Folio");
+        MenuItem menuLoad = new MenuItem("Load Folio");
+        fileMenu.getItems().addAll(menuNew, menuSave, menuLoad);
         menuBar.getMenus().add(fileMenu);
         vBox.getChildren().add(menuBar);
         TabPane tabpane = new TabPane();
@@ -224,8 +228,8 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(vBox, 1000, 600));
         primaryStage.show();
 
-        menuItem1.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
-        menuItem1.setOnAction(e -> {
+        menuNew.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
+        menuNew.setOnAction(e -> {
             newDialog();
             try {
                 start(primaryStage);
@@ -234,10 +238,32 @@ public class Main extends Application {
             }
         });
 
+        menuSave.setOnAction(e ->{
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Save Folio");
+            fc.getExtensionFilters().add( new FileChooser.ExtensionFilter("FOLIO files (*.folio)", "*.folio"));
+            File file = fc.showSaveDialog(primaryStage);
 
+            if(file != null){
+                System.out.println(tabpane.getSelectionModel().getSelectedIndex());
+                folios.get(tabpane.getSelectionModel().getSelectedIndex()).save(file.toString());
+            }
+        });
+
+        menuLoad.setOnAction(e->{
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Load Folio");
+            File file = fc.showOpenDialog(primaryStage);
+            if(file != null){
+                folios.add(new FolioModel(1, "new").load(file.toString()));
+            }
+            try {
+                start(primaryStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
     }
-
-
 
     private Timeline autoRefresh(ObservableList<StockModel> stocks, TableView<StockModel> table, ButtonHandler buttonHandler) {
         return new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
