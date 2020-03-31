@@ -16,6 +16,8 @@ public class StockModel implements iStockModel, Serializable {
     private double lastKnownPrice;
     private double initialBuyPrice;
     private double value;
+    private double high;
+    private double low;
 
     /*
      * Constructor for stock w/values
@@ -37,6 +39,8 @@ public class StockModel implements iStockModel, Serializable {
     	this.numShares = initialNoOfShares;
     	this.lastKnownPrice = -1;
     	this.value = -1;
+    	high = Double.NEGATIVE_INFINITY;
+    	low = Double.POSITIVE_INFINITY;
         refresh(); //this is called when a new stock is created and the refresh method will update lastknown price therefore initial price can be set to lastknown
         //initialBuyPrice = lastKnownPrice.get();
         initialBuyPrice = lastKnownPrice;
@@ -55,6 +59,18 @@ public class StockModel implements iStockModel, Serializable {
     public int getNumShares() {
        // return numShares.get();
     	return numShares;
+    }
+
+    public double getHigh(){
+        double h = Math.round(high) * 100;
+        h/=100;
+        return h;
+    }
+
+    public double getLow(){
+        double l = Math.round(low) * 100;
+        l/=100;
+        return l;
     }
 
     public int getInitialNoOfShares() {
@@ -130,6 +146,8 @@ public class StockModel implements iStockModel, Serializable {
             String value = StrathQuoteServer.getLastValue(tickerSymbol);
             value = value.replace(",", "");
             lastKnownPrice = Double.parseDouble(value);
+            setHigh(lastKnownPrice);
+            setLow(lastKnownPrice);
             setValue(getNumShares()*getLastKnownPrice());
             System.out.println("In stock refresh: " + lastKnownPrice);
             return this;    //this may cause an issue in the constructor but maybe not
@@ -141,6 +159,18 @@ public class StockModel implements iStockModel, Serializable {
             return null;
         }
         
+    }
+    //last known price is public TODO fix this to use global
+    private void setHigh(double lastKnownPrice) {
+        if(lastKnownPrice > high){
+            high = lastKnownPrice;
+        }
+    }
+
+    private void setLow(double lastKnownPrice){
+        if(lastKnownPrice < low){
+            low = lastKnownPrice;
+        }
     }
 
     public ImageView getChange() throws FileNotFoundException {

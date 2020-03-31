@@ -135,11 +135,12 @@ public class Main extends Application {
                     if (item != null) {
                         double num = Math.round(item * 100);
                         num = num / 100;
-                        this.setText(Double.toString(num));
                         if (num < 0) {
+                            this.setText("- " + Double.toString(num));
                             this.setBackground(new Background(new BackgroundFill(Color.RED,
                                     null, null)));
                         } else {
+                            this.setText("+ " + Double.toString(num));
                             this.setBackground(new Background(new BackgroundFill(Color.GREEN,
                                     null, null)));
                         }
@@ -147,12 +148,23 @@ public class Main extends Application {
                 }
             });
 
+            TableColumn<StockModel, Double> high = new TableColumn<>("High");
+            high.setMinWidth(100);
+            high.setCellValueFactory(new PropertyValueFactory<>("high"));
+
+            TableColumn<StockModel, Double> low = new TableColumn<>("Low");
+            low.setMinWidth(100);
+            low.setCellValueFactory(new PropertyValueFactory<>("low"));
+
+
             table.getColumns().addAll(tickerSymbolColumn,
                     stockNameColumn,
                     numberSharesColumn,
                     pricePerShareColumn,
                     valueOfHolding,
-                    change);
+                    change,
+                    high,
+                    low);
             tabContent.getChildren().addAll(newStocks, table);
 
             tab1.setContent(tabContent);
