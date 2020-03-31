@@ -1,13 +1,13 @@
 package Controller;
 
 import Model.StockModel;
+import Model.iFolioModel;
 import javafx.collections.ObservableList;
-import java.util.ArrayList;
 
 public class ButtonHandler {
-    Model.FolioModel folioModel;
+    iFolioModel folioModel;
 
-    public ButtonHandler(Model.FolioModel folioModel) {
+    public ButtonHandler(iFolioModel folioModel) {
         this.folioModel = folioModel;
     }
 

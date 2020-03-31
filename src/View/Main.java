@@ -3,6 +3,7 @@ package View;
 import Controller.ButtonHandler;
 import Model.FolioModel;
 import Model.StockModel;
+import Model.iFolioModel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -33,7 +34,7 @@ import java.util.Optional;
 
 public class Main extends Application {
 
-    private ArrayList<FolioModel> folios = new ArrayList<>(); // all current opened folio's
+    private ArrayList<iFolioModel> folios = new ArrayList<>(); // all current opened folio's
     private String newPopupField;
 
     @Override

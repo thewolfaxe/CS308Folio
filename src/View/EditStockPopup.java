@@ -3,6 +3,7 @@ package View;
 import Controller.ButtonHandler;
 import Controller.PopupButtonHandler;
 import Model.StockModel;
+import Model.iStockModel;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,7 +19,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 public class EditStockPopup extends Application {
-    StockModel stock;
+    iStockModel stock;
     String folioName;
 
     public EditStockPopup(StockModel stock, String folioName) {

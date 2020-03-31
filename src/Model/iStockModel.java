@@ -15,5 +15,6 @@ public interface iStockModel {
         double getInitBuyPrice();
         double getValue();
         void setValue(double value);
-
+        double getInitValue();
+        double getGain();
 }
