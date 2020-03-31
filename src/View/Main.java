@@ -239,14 +239,23 @@ public class Main extends Application {
         });
 
         menuSave.setOnAction(e ->{
-            FileChooser fc = new FileChooser();
-            fc.setTitle("Save Folio");
-            fc.getExtensionFilters().add( new FileChooser.ExtensionFilter("FOLIO files (*.folio)", "*.folio"));
-            File file = fc.showSaveDialog(primaryStage);
+            if(folios.size()>0){
+                FileChooser fc = new FileChooser();
+                fc.setTitle("Save Folio");
+                fc.getExtensionFilters().add( new FileChooser.ExtensionFilter("FOLIO files (*.folio)", "*.folio"));
+                File file = fc.showSaveDialog(primaryStage);
 
-            if(file != null){
-                System.out.println(tabpane.getSelectionModel().getSelectedIndex());
-                folios.get(tabpane.getSelectionModel().getSelectedIndex()).save(file.toString());
+                if(file != null){
+                    System.out.println(tabpane.getSelectionModel().getSelectedIndex());
+                    folios.get(tabpane.getSelectionModel().getSelectedIndex()).save(file.toString());
+                }
+            }
+            else{
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("No Folio open");
+                error.setHeaderText("No Folio open");
+                error.setContentText("Please Create a Folio or load one from disk before saving");
+                error.showAndWait();
             }
         });
 
