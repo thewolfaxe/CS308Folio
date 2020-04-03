@@ -4,6 +4,7 @@ import Controller.ButtonHandler;
 import Model.FolioModel;
 import Model.StockModel;
 import Model.iFolioModel;
+import Model.iStockModel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -96,39 +97,39 @@ public class Main extends Application {
             newStocks.getChildren().addAll(nameStock, stockInfo, refresh);
             newStocks.setAlignment(Pos.CENTER);
 
-            ObservableList<StockModel> stocks = FXCollections.observableArrayList(folios.get(i).getStocks());
+            ObservableList<iStockModel> stocks = FXCollections.observableArrayList(folios.get(i).getStocks());
 
-            TableView<StockModel> table = new TableView<>();
+            TableView<iStockModel> table = new TableView<>();
             table.setItems(stocks);
             table.setMinHeight(600 - newStocks.getHeight());
             table.setEditable(false); //for now
 
-            TableColumn<StockModel, String> tickerSymbolColumn = new TableColumn<>("Ticker Symbol");
+            TableColumn<iStockModel, String> tickerSymbolColumn = new TableColumn<>("Ticker Symbol");
             tickerSymbolColumn.setMinWidth(200);
             tickerSymbolColumn.setCellValueFactory(new PropertyValueFactory<>("tickerSymbol"));
 
-            TableColumn<StockModel, String> stockNameColumn = new TableColumn<>("Stock Name");
+            TableColumn<iStockModel, String> stockNameColumn = new TableColumn<>("Stock Name");
             stockNameColumn.setMinWidth(100);
             stockNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-            TableColumn<StockModel, Integer> numberSharesColumn = new TableColumn<>("Number of Shares");
+            TableColumn<iStockModel, Integer> numberSharesColumn = new TableColumn<>("Number of Shares");
             numberSharesColumn.setMinWidth(100);
             numberSharesColumn.setCellValueFactory(new PropertyValueFactory<>("numShares"));
 
-            TableColumn<StockModel, Double> pricePerShareColumn = new TableColumn<>("Price per Share");
+            TableColumn<iStockModel, Double> pricePerShareColumn = new TableColumn<>("Price per Share");
             pricePerShareColumn.setMinWidth(100);
             pricePerShareColumn.setCellValueFactory(new PropertyValueFactory<>("lastKnownPrice"));
 
-            TableColumn<StockModel, Double> valueOfHolding = new TableColumn<>("Value of Holding");
+            TableColumn<iStockModel, Double> valueOfHolding = new TableColumn<>("Value of Holding");
             valueOfHolding.setMinWidth(100);
             valueOfHolding.setCellValueFactory(new PropertyValueFactory<>("value"));
 
-            TableColumn<StockModel, Double> change = new TableColumn<>("Trend");
+            TableColumn<iStockModel, Double> change = new TableColumn<>("Trend");
             change.setMinWidth(100);
             change.setCellValueFactory(new PropertyValueFactory<>("trend"));
 
             int finalI1 = i;
-            change.setCellFactory(a -> new TableCell<StockModel, Double>() {
+            change.setCellFactory(a -> new TableCell<iStockModel, Double>() {
 
                 @Override
                 public void updateItem(Double item, boolean empty) {
@@ -149,11 +150,11 @@ public class Main extends Application {
                 }
             });
 
-            TableColumn<StockModel, Double> high = new TableColumn<>("High");
+            TableColumn<iStockModel, Double> high = new TableColumn<>("High");
             high.setMinWidth(100);
             high.setCellValueFactory(new PropertyValueFactory<>("high"));
 
-            TableColumn<StockModel, Double> low = new TableColumn<>("Low");
+            TableColumn<iStockModel, Double> low = new TableColumn<>("Low");
             low.setMinWidth(100);
             low.setCellValueFactory(new PropertyValueFactory<>("low"));
 
@@ -210,7 +211,7 @@ public class Main extends Application {
             });
 
             refresh.setOnAction(a -> {
-                ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                ObservableList<iStockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
                 for (int j = 0; j < refreshedStocks.size(); j++) {
                     if(stocks.get(j).getLastKnownPrice() > refreshedStocks.get(j).getLastKnownPrice()){
                     //set text for that row green, confused how to do this
@@ -222,7 +223,7 @@ public class Main extends Application {
             });
 
             table.setRowFactory(a -> {
-                TableRow<StockModel> row = new TableRow<>();
+                TableRow<iStockModel> row = new TableRow<>();
                 row.setOnMouseClicked(e -> {
                     if (e.getClickCount() == 2 && (!row.isEmpty())) {
                         EditStockPopup popupEdit = new EditStockPopup(row.getItem(), folios.get(finalI).getName());
@@ -230,7 +231,7 @@ public class Main extends Application {
                         popup.showAndWait();
                     }
                     if (!row.isEmpty()) {
-                        StockModel refreshedStock = buttonHandler.soloRefresh(row.getItem());
+                        iStockModel refreshedStock = buttonHandler.soloRefresh(row.getItem());
                         if (refreshedStock != null)
                             if (stocks.contains(refreshedStock))
                                 stocks.set(stocks.indexOf(refreshedStock), refreshedStock);
@@ -303,7 +304,7 @@ public class Main extends Application {
         });
     }
 
-    private Timeline autoRefresh(ObservableList<StockModel> stocks, TableView<StockModel> table, ButtonHandler buttonHandler) {
+    private Timeline autoRefresh(ObservableList<iStockModel> stocks, TableView<iStockModel> table, ButtonHandler buttonHandler) {
         return new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
             System.out.println("\nRefreshing stocks");
             ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
@@ -319,8 +320,8 @@ public class Main extends Application {
         }));
     }
 
-    private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<StockModel> stocks, ButtonHandler buttonHandler) {
-        StockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
+    private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<iStockModel> stocks, ButtonHandler buttonHandler) {
+        iStockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
         if (stock != null) {
             if (stocks.contains(stock))
                 stocks.set(stocks.indexOf(stock), stock);
