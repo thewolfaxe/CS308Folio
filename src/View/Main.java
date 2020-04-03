@@ -212,6 +212,11 @@ public class Main extends Application {
             refresh.setOnAction(a -> {
                 ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
                 for (int j = 0; j < refreshedStocks.size(); j++) {
+                    if(stocks.get(j).getLastKnownPrice() > refreshedStocks.get(j).getLastKnownPrice()){
+                    //set text for that row green, confused how to do this
+                    }else if(stocks.get(j).getLastKnownPrice() < refreshedStocks.get(j).getLastKnownPrice()){
+                        //set text for that row green, confused how to do this
+                    }
                     stocks.set(j, refreshedStocks.get(j));
                 }
             });
@@ -300,9 +305,14 @@ public class Main extends Application {
 
     private Timeline autoRefresh(ObservableList<StockModel> stocks, TableView<StockModel> table, ButtonHandler buttonHandler) {
         return new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
-            System.out.println("\nRefreshing stonks");
+            System.out.println("\nRefreshing stocks");
             ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
             for (int j = 0; j < refreshedStocks.size(); j++) {
+                if(stocks.get(j).getLastKnownPrice() > refreshedStocks.get(j).getLastKnownPrice()){
+                    //set text for that row green, confused how to do this
+                }else if(stocks.get(j).getLastKnownPrice() < refreshedStocks.get(j).getLastKnownPrice()){
+                    //set text for that row green, confused how to do this
+                }
                 stocks.set(j, refreshedStocks.get(j));
             }
             System.out.println("stocks refreshed");
