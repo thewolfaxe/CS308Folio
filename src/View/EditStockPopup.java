@@ -22,7 +22,7 @@ public class EditStockPopup extends Application {
     iStockModel stock;
     String folioName;
 
-    public EditStockPopup(StockModel stock, String folioName) {
+    public EditStockPopup(iStockModel stock, String folioName) {
         this.stock = stock;
         this.folioName = folioName;
     }
