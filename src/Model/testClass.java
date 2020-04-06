@@ -8,7 +8,7 @@ public class testClass {
 	public static void main(String[] args) {
 
 		FolioModel fm = new FolioModel(1,"name");
-		fm.addStock("APPL","apple",2);
+		fm.newStock("APPL","apple",2);
 		fm.save("new.csv");
 
 

@@ -164,7 +164,6 @@ public class StockModel implements iStockModel, Serializable {
             setHigh(lastKnownPrice);
             setLow(lastKnownPrice);
             setValue(getNumShares()*getLastKnownPrice());
-            System.out.println("In stock refresh: " + lastKnownPrice);
             return this;    //this may cause an issue in the constructor but maybe not
         }catch(WebsiteDataException | NoSuchTickerException e){
             System.out.println("failed: " + e);

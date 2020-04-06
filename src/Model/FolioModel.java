@@ -24,7 +24,7 @@ public class FolioModel implements iFolioModel, Serializable {
         return name;
     }
 
-    public void refreshStocks() {
+    public synchronized void refreshStocks() {
         for (StockModel stock : stocks) {
             stock.refresh();
         }
@@ -76,14 +76,7 @@ public class FolioModel implements iFolioModel, Serializable {
         return stocks;
     }
 
-    public StockModel addStock(String ticker, String name, int shares) {
-        for (StockModel stock : stocks) {
-            if (stock.getTickerSymbol().equals(ticker)) {
-                stock.buyShares(shares);
-                return stock;
-            }
-        }
-
+    public iStockModel newStock(String ticker, String name, int shares) {
         StockModel newStock = new StockModel(ticker, name, shares);
         if (newStock.refresh() != null) {
             stocks.add(newStock);
@@ -92,8 +85,14 @@ public class FolioModel implements iFolioModel, Serializable {
             return null;
     }
 
-    public void addStock(StockModel s) {
-        stocks.add(s);
+    public iStockModel buyStock(iStockModel s, int shares) {
+        for (iStockModel stock : stocks) {
+            if (stock == s) {
+                stock.buyShares(shares);
+                return stock;
+            }
+        }
+        return null;
     }
 
     public boolean deleteStock(String ticker) {
@@ -141,12 +140,15 @@ public class FolioModel implements iFolioModel, Serializable {
             file.close();
             System.out.println("Folio has been loaded");
             return (FolioModel) object;
+        } catch (InvalidClassException ex) {
+            System.out.println(".folio file is of a previous version and is no longer compatible");
+            return null;
         } catch (IOException ex) {
-            System.out.println("IOException is caught");
-            ex.printStackTrace();
+            System.out.println("Can't find the file");
+//            ex.printStackTrace();
             return null;
         } catch (ClassNotFoundException ex) {
-            System.out.println("ClassNotFoundException" + " is caught");
+            System.out.println("Can't read the file");
             return null;
         }
     }

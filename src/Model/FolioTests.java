@@ -16,7 +16,7 @@ public class FolioTests {
         StockModel testStock = new StockModel("GOOGL", "Google", 1);
         empty.add(testStock);
 
-        testFolio.addStock("GOOGL", "Google", 1);
+        testFolio.newStock("GOOGL", "Google", 1);
         System.out.println(empty.get(0) + " " + testFolio.getStocks().get(0));
 
         Assertions.assertTrue((empty.get(0).getName().equals(testFolio.getStocks().get(0).getName())) &&
@@ -32,14 +32,14 @@ public class FolioTests {
 
     @Test
     public void addStockTestBadStock(){
-        Assertions.assertNull(testFolio.addStock("blah", "blah", 0));
+        Assertions.assertNull(testFolio.newStock("blah", "blah", 0));
     }
 
     @Test
     public void increaseSharesTest(){
-        testFolio.addStock("GOOGL", "Google", 1);
-        testFolio.addStock("GOOGL", "Google", 1);
-        Assertions.assertEquals(testFolio.getStocks().get(0).getNumShares(), 2);
+        testFolio.newStock("GOOGL", "Google", 1);
+        testFolio.newStock("GOOGL", "Google", 1);
+        Assertions.assertEquals(testFolio.getStocks().get(0).getNumShares(), 1);
     }
 
     @Test
@@ -73,8 +73,8 @@ public class FolioTests {
 
     @Test
     public void sortTestByTicker(){
-        testFolio.addStock("GOOGL","Google",1);
-        testFolio.addStock("APPL","Apple",1);
+        testFolio.newStock("GOOGL","Google",1);
+        testFolio.newStock("APPL","Apple",1);
         testFolio.sort(1, false);
 
         Assertions.assertEquals("APPL", testFolio.getStocks().get(0).getTickerSymbol());
@@ -82,8 +82,8 @@ public class FolioTests {
 
     @Test
     public void sortTestByName(){
-        testFolio.addStock("GOOGL","Google",1);
-        testFolio.addStock("APPL","Apple",2);
+        testFolio.newStock("GOOGL","Google",1);
+        testFolio.newStock("APPL","Apple",2);
         testFolio.sort(2, true);
 
         Assertions.assertEquals("Apple", testFolio.getStocks().get(0).getName());
@@ -91,8 +91,8 @@ public class FolioTests {
 
     @Test
     public void sortTestByNoShares(){
-        testFolio.addStock("GOOGL","Google",1);
-        testFolio.addStock("APPL","Apple",2);
+        testFolio.newStock("GOOGL","Google",1);
+        testFolio.newStock("APPL","Apple",2);
         testFolio.sort(3, true);
 
         Assertions.assertEquals(1, testFolio.getStocks().get(0).getNumShares());

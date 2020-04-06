@@ -1,8 +1,9 @@
 package View;
 
-import Controller.ButtonHandler;
-import Model.FolioModel;
-import Model.StockModel;
+import Controller.FileHandler;
+import Controller.NewFolioAdder;
+import Controller.NewStockHandler;
+import Controller.RefreshHandler;
 import Model.iFolioModel;
 import Model.iStockModel;
 import javafx.animation.KeyFrame;
@@ -25,18 +26,16 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class Main extends Application {
 
     private ArrayList<iFolioModel> folios = new ArrayList<>(); // all current opened folio's
-    private String newPopupField;
+    private NewStockHandler newStockHandler;
+    private RefreshHandler refreshHandler;
+    private FileHandler fileHandler;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -67,6 +66,7 @@ public class Main extends Application {
             innerTab = new VBox();
         }
         for (int i = 0; i < folios.size(); i++) {
+
             innerTab = new VBox();
             Tab tab1 = new Tab(folios.get(i).getName()); // Set folio tab name
             int finalI = i; // Needed for some reason
@@ -128,9 +128,7 @@ public class Main extends Application {
             change.setMinWidth(100);
             change.setCellValueFactory(new PropertyValueFactory<>("trend"));
 
-            int finalI1 = i;
-            change.setCellFactory(a -> new TableCell<iStockModel, Double>() {
-
+            change.setCellFactory(a -> new TableCell<>() {
                 @Override
                 public void updateItem(Double item, boolean empty) {
                     super.updateItem(item, false);
@@ -172,50 +170,37 @@ public class Main extends Application {
             tab1.setContent(tabContent);
             tabpane.getTabs().add(tab1); //add all probably
 
-            ButtonHandler buttonHandler = new ButtonHandler(folios.get(i));
-            Task<Void> refreshThread = new Task<>() {
-                @Override
-                protected Void call() throws Exception {
-                    try {
-                        Thread.sleep(10000);
-                    } catch (Exception exc) {
-                    }
-                    Platform.runLater(() -> {
-                        Timeline autoRefresh = autoRefresh(stocks, table, buttonHandler);
-                        autoRefresh.setCycleCount(Timeline.INDEFINITE);
-                        autoRefresh.play();
-                    });
-                    return null;
-                }
-            };
+            refreshHandler = new RefreshHandler(folios.get(i), stocks);
+            newStockHandler = new NewStockHandler(folios.get(i));
 
-            new Thread(refreshThread).start();
+            autoRefreshSetup(stocks);
 
             tickerSymbol_txt.setOnKeyPressed(a -> {
                 if (a.getCode().equals(KeyCode.ENTER)) {
-                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
+                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler);
                 }
             });
             numberShares_txt.setOnKeyPressed(a -> {
                 if (a.getCode().equals(KeyCode.ENTER)) {
-                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
+                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler);
                 }
             });
             name_txt.setOnKeyPressed(a -> {
                 if (a.getCode().equals(KeyCode.ENTER)) {
-                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
+                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler);
                 }
             });
             add.setOnAction(a -> {
-                handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, buttonHandler);
+                handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler);
             });
 
+
             refresh.setOnAction(a -> {
-                ObservableList<iStockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
+                ObservableList<iStockModel> refreshedStocks = refreshHandler.mainRefresh(stocks);
                 for (int j = 0; j < refreshedStocks.size(); j++) {
-                    if(stocks.get(j).getLastKnownPrice() > refreshedStocks.get(j).getLastKnownPrice()){
-                    //set text for that row green, confused how to do this
-                    }else if(stocks.get(j).getLastKnownPrice() < refreshedStocks.get(j).getLastKnownPrice()){
+                    if (stocks.get(j).getLastKnownPrice() > refreshedStocks.get(j).getLastKnownPrice()) {
+                        //set text for that row green, confused how to do this
+                    } else if (stocks.get(j).getLastKnownPrice() < refreshedStocks.get(j).getLastKnownPrice()) {
                         //set text for that row green, confused how to do this
                     }
                     stocks.set(j, refreshedStocks.get(j));
@@ -231,7 +216,7 @@ public class Main extends Application {
                         popup.showAndWait();
                     }
                     if (!row.isEmpty()) {
-                        iStockModel refreshedStock = buttonHandler.soloRefresh(row.getItem());
+                        iStockModel refreshedStock = refreshHandler.soloRefresh(row.getItem());
                         if (refreshedStock != null)
                             if (stocks.contains(refreshedStock))
                                 stocks.set(stocks.indexOf(refreshedStock), refreshedStock);
@@ -257,107 +242,90 @@ public class Main extends Application {
             }
         });
 
+        fileHandler = new FileHandler();
+
         menuSave.setOnAction(e -> {
             if (folios.size() > 0) {
-                FileChooser fc = new FileChooser();
-                fc.setTitle("Save Folio");
-                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("FOLIO files (*.folio)", "*.folio"));
-                File file = fc.showSaveDialog(primaryStage);
-
-                if (file != null) {
-                    System.out.println(tabpane.getSelectionModel().getSelectedIndex());
-                    folios.get(tabpane.getSelectionModel().getSelectedIndex()).save(file.toString());
+                if (fileHandler.save(folios.get(tabpane.getSelectionModel().getSelectedIndex()))) {
+                    System.out.println("File saved successfully");
                 }
             } else {
-                Alert error = new Alert(Alert.AlertType.ERROR);
-                error.setTitle("No Folio open");
-                error.setHeaderText("No Folio open");
-                error.setContentText("Please Create a Folio or load one from disk before saving");
-                error.showAndWait();
+                errorAlert("Error", "No Folio open", "Please create or load a folio before saving",
+                        "No folio detected to save");
             }
         });
 
         menuLoad.setOnAction(e -> {
-            FileChooser fc = new FileChooser();
-            fc.setTitle("Load Folio");
-            File file = fc.showOpenDialog(primaryStage);
-            if (file != null) {
-                FolioModel loadedFolio = FolioModel.load(file.toString());
-                if(loadedFolio != null) {
-                    folios.add(FolioModel.load(file.toString()));
-                    try {
-                        start(primaryStage);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    return;
-                }
+            try {
+                folios = fileHandler.load(folios);
+                start(primaryStage);
+            } catch (Exception ex) {
+                errorAlert("Error", "Error loading your folio", "Please make sure you have the correct file",
+                        "Generic error needed for start method");
+
             }
-
-                Alert addedError = new Alert(Alert.AlertType.ERROR);
-                addedError.setTitle("Error");
-                addedError.setHeaderText("Error loading your folio");
-                addedError.setContentText("Please make sure you have selected the correct file");
-                System.out.println("Failed to load file");
-                addedError.showAndWait();
-
         });
     }
 
-    private Timeline autoRefresh(ObservableList<iStockModel> stocks, TableView<iStockModel> table, ButtonHandler buttonHandler) {
+    public void errorAlert(String title, String header, String content, String consolePrint) {
+        Alert error = new Alert(Alert.AlertType.ERROR);
+        error.setTitle(title);
+        error.setHeaderText(header);
+        error.setContentText(content);
+        System.out.println(consolePrint);
+        error.showAndWait();
+    }
+
+    public void autoRefreshSetup(ObservableList<iStockModel> stocks) {
+        Task<Void> refreshThread = new Task<>() {
+            @Override
+            protected Void call() {
+                try {
+                    Thread.sleep(60000);
+                } catch(InterruptedException e) {
+                    System.out.println("Thread sleep interrupted");
+                }
+                Platform.runLater(() -> {
+                    Timeline autoRefresh = autoRefresh(stocks);
+                    autoRefresh.setCycleCount(Timeline.INDEFINITE);
+                    autoRefresh.play();
+                });
+                return null;
+            }
+        };
+
+        new Thread(refreshThread).start();
+    }
+
+    private Timeline autoRefresh(ObservableList<iStockModel> stocks) {
         return new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
             System.out.println("\nRefreshing stocks");
-            ObservableList<StockModel> refreshedStocks = buttonHandler.mainRefresh(stocks);
-            for (int j = 0; j < refreshedStocks.size(); j++) {
-                if(stocks.get(j).getLastKnownPrice() > refreshedStocks.get(j).getLastKnownPrice()){
-                    //set text for that row green, confused how to do this
-                }else if(stocks.get(j).getLastKnownPrice() < refreshedStocks.get(j).getLastKnownPrice()){
-                    //set text for that row green, confused how to do this
-                }
+            ObservableList<iStockModel> refreshedStocks = refreshHandler.mainRefresh(stocks);
+            for (int j = 0; j < refreshedStocks.size(); j++)
                 stocks.set(j, refreshedStocks.get(j));
-            }
             System.out.println("stocks refreshed");
         }));
     }
 
-    private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<iStockModel> stocks, ButtonHandler buttonHandler) {
-        iStockModel stock = buttonHandler.mainAdd(name_txt.getText(), tickerSymbol_txt.getText(), numberShares_txt.getText());
+
+    private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<iStockModel> stocks, NewStockHandler newStockHandler) {
+        iStockModel stock = newStockHandler.addStock(name_txt.getText(), tickerSymbol_txt.getText().toUpperCase(), numberShares_txt.getText());
         if (stock != null) {
-            if (stocks.contains(stock))
-                stocks.set(stocks.indexOf(stock), stock);
-            else
-                stocks.add(stock);
+            stocks.add(stock);
+
             name_txt.clear();
             tickerSymbol_txt.clear();
             numberShares_txt.clear();
         } else {
-            Alert addedError = new Alert(Alert.AlertType.ERROR);
-            addedError.setTitle("Error");
-            addedError.setHeaderText("Error adding your stock");
-            addedError.setContentText("Please make sure all the provided info is correct");
-            System.out.println("Failed");
-            addedError.showAndWait();
+            errorAlert("Error", "Problem adding your stock", "Please make sure all the provided info" +
+                            " is correct. Please note this stock may already exist in your folio",
+                    "Can't add stock");
         }
     }
 
     private void newDialog() {
-
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Enter new stock name");
-        dialog.setHeaderText("Enter stock name");
-        dialog.setContentText("Stock Name:");
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(name -> {
-            newPopupField = result.get();
-            if (folios.size() > 0) {
-                folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
-            } else {
-                folios.add(new FolioModel(0, newPopupField));
-
-            }
-            System.out.println(folios.size());
-
-        });
+        NewFolioAdder adder = new NewFolioAdder(folios);
+        folios = adder.addFolio();
     }
 
     public static void main(String[] args) {

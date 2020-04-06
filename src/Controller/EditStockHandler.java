@@ -4,10 +4,10 @@ import Model.StockModel;
 import Model.iStockModel;
 import javafx.collections.ObservableList;
 
-public class PopupButtonHandler {
+public class EditStockHandler {
     iStockModel stock;
 
-    public PopupButtonHandler(iStockModel stock) {
+    public EditStockHandler(iStockModel stock) {
         this.stock = stock;
     }
 
