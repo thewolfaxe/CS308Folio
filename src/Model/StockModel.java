@@ -82,8 +82,10 @@ public class StockModel implements iStockModel, Serializable {
     }
 
     public double getLastKnownPrice() {
-       // return lastKnownPrice.get();
-    	return lastKnownPrice;
+        double temp = lastKnownPrice * 100;
+        Math.round(temp);
+        temp/=100;
+    	return temp;
     }
 
     public double getInitBuyPrice() {
@@ -95,8 +97,10 @@ public class StockModel implements iStockModel, Serializable {
     }
 
     public double getValue() {
-       // return value.get();
-    	return value;
+        double temp = value * 100;
+        Math.round(temp);
+        temp/=100;
+        return temp;
     }
 
     public void setValue(double value) {
