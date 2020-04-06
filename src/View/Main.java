@@ -103,7 +103,7 @@ public class Main extends Application {
 
             TableView<iStockModel> table = new TableView<>();
             table.setItems(stocks);
-            table.setMinHeight(600 - newStocks.getHeight());
+            table.setMinHeight(400 - newStocks.getHeight());
             table.setEditable(false); //for now
 
             TableColumn<iStockModel, String> tickerSymbolColumn = new TableColumn<>("Ticker Symbol");
@@ -167,7 +167,12 @@ public class Main extends Application {
                     change,
                     high,
                     low);
-            tabContent.getChildren().addAll(newStocks, table);
+
+            VBox v2 = new VBox();
+            Label totalValue = new Label("Total Folio Value: ");
+            v2.getChildren().add(totalValue);
+            v2.setAlignment(Pos.CENTER);
+            tabContent.getChildren().addAll(newStocks, table, v2);
 
             tab1.setContent(tabContent);
             tabpane.getTabs().add(tab1); //add all probably
@@ -310,6 +315,7 @@ public class Main extends Application {
             for (int j = 0; j < refreshedStocks.size(); j++)
                 stocks.set(j, refreshedStocks.get(j));
             System.out.println("stocks refreshed");
+            System.out.println(stocks.size());
         }));
     }
 
