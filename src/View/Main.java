@@ -47,7 +47,9 @@ public class Main extends Application {
         MenuItem menuNew = new MenuItem("New");
         MenuItem menuSave = new MenuItem("Save Folio");
         MenuItem menuLoad = new MenuItem("Load Folio");
-        fileMenu.getItems().addAll(menuNew, menuSave, menuLoad);
+        MenuItem menuExit = new MenuItem("Exit");
+        SeparatorMenuItem separator = new SeparatorMenuItem();
+        fileMenu.getItems().addAll(menuNew, menuSave, menuLoad, separator, menuExit);
         menuBar.getMenus().add(fileMenu);
         vBox.getChildren().add(menuBar);
         TabPane tabpane = new TabPane();
@@ -264,6 +266,10 @@ public class Main extends Application {
                         "Generic error needed for start method");
 
             }
+        });
+
+        menuExit.setOnAction(e -> {
+            System.exit(0);
         });
     }
 
