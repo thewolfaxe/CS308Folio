@@ -173,7 +173,7 @@ public class StockModel implements iStockModel, Serializable {
             System.out.println("failed: " + e);
             return null;
         }catch (Exception e) {
-            System.out.println("I done fucked up");
+            System.out.println("failed: " + e);
             return null;
         }
         
