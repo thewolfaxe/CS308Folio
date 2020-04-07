@@ -38,8 +38,8 @@ public class FolioTests {
     @Test
     public void increaseSharesTest(){
         testFolio.newStock("GOOGL", "Google", 1);
-        testFolio.newStock("GOOGL", "Google", 1);
-        Assertions.assertEquals(testFolio.getStocks().get(0).getNumShares(), 1);
+        testFolio.buyStock(new StockModel("GOOGL", "Google", 1),1);
+        Assertions.assertEquals(testFolio.getStocks().get(0).getNumShares(), 2);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class FolioTests {
 
     @Test
     public void deleteStockTestDoesNotExist(){
-        Assertions.assertFalse(testFolio.deleteStock("blah"));
+        Assertions.assertFalse(testFolio.deleteStock("blahh"));
     }
 
     @Test

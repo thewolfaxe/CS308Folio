@@ -87,7 +87,7 @@ public class FolioModel implements iFolioModel, Serializable {
 
     public iStockModel buyStock(iStockModel s, int shares) {
         for (iStockModel stock : stocks) {
-            if (stock == s) {
+            if (stock.getTickerSymbol().equals(s.getTickerSymbol())) {
                 stock.buyShares(shares);
                 return stock;
             }
