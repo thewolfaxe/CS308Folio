@@ -1,36 +1,40 @@
 package View;
 
 import Controller.EditStockHandler;
+import Model.StockModel;
+import Model.iFolioModel;
 import Model.iStockModel;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.Optional;
 
 public class EditStockPopup extends Application {
     iStockModel stock;
-    String folioName;
+    iFolioModel folio;
 
-    public EditStockPopup(iStockModel stock, String folioName) {
+    public EditStockPopup(iStockModel stock, iFolioModel folio) {
         this.stock = stock;
-        this.folioName = folioName;
+        this.folio = folio;
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        stage = popup();
-        stage.show();
+//        stage = popup();
+//        stage.show();
     }
 
-    public Stage popup() {
+    public ArrayList<StockModel> popup() {
         Stage stage = new Stage();
 
         VBox popup = new VBox();
@@ -38,7 +42,7 @@ public class EditStockPopup extends Application {
         popup.setPadding(s);
         popup.setSpacing(10);
 
-        Label portInfo = new Label("Editing portfolio: " + folioName);
+        Label portInfo = new Label("Editing portfolio: " + folio.getName());
         portInfo.setTextFill(Paint.valueOf("#6897bb"));
 
         GridPane mainContent = new GridPane();
@@ -82,7 +86,8 @@ public class EditStockPopup extends Application {
         Button apply = new Button("Apply");
         Button cancel = new Button("Cancel");
         Button sellAll = new Button("Sell All");
-        buttons.getChildren().addAll(apply, cancel, sellAll);
+        Button delete = new Button("Delete");
+        buttons.getChildren().addAll(apply, cancel, sellAll, delete);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(3);
 
@@ -113,10 +118,48 @@ public class EditStockPopup extends Application {
 
         sellAll.setOnMouseClicked(e -> {
             handler.editStockApply(0, stock.getNumShares());
+            Alert deleteQ = new Alert(Alert.AlertType.CONFIRMATION);
+            deleteQ.setTitle("Empty Stock");
+            deleteQ.setHeaderText("You have no stock in this company");
+            deleteQ.setContentText("Would you like to remove this stock from your folio?");
+            deleteQ.initOwner(stage);
+            Optional<ButtonType> choice = deleteQ.showAndWait();
+            if(choice.get() == ButtonType.OK)
+                delete(handler, stage);
             stage.close();
         });
 
-        return stage;
+        delete.setOnMouseClicked(e -> {
+            if(stock.getNumShares() != 0) {
+                Alert warning = new Alert(Alert.AlertType.WARNING);
+                warning.setTitle("Warning");
+                warning.setHeaderText("You still have shares in this company");
+                warning.setContentText("We cannot delete this stock until there are 0 shares");
+                warning.initOwner(stage);
+                warning.showAndWait();
+            }else {
+                delete(handler, stage);
+                stage.close();
+            }
+        });
+
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.showAndWait();
+        return folio.getStocks();
+    }
+
+    public void delete(EditStockHandler handler, Stage stage) {
+        iFolioModel check = handler.delete(folio);
+        if(check != null)
+           folio = check;
+        else {
+            Alert error = new Alert(Alert.AlertType.ERROR);
+            error.setTitle("Error");
+            error.setHeaderText("There was a problem deleting your stock");
+            error.setContentText("Please try again later");
+            error.initOwner(stage);
+            error.showAndWait();
+        }
     }
 
     public static void main(String[] args) {
