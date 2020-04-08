@@ -142,7 +142,8 @@ public class Main extends Application {
         if (stock != null) {
             stocks.add(stock);
             ObservableList<iFolioModel> refreshedTotal = refresh.totalRefresh(totals);
-            totals.setAll(refreshedTotal);
+            for (int j = 0; j < refreshedTotal.size(); j++)
+                totals.set(j, refreshedTotal.get(j));
 
             name_txt.clear();
             tickerSymbol_txt.clear();
