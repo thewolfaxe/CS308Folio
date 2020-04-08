@@ -7,9 +7,9 @@ import javafx.scene.control.TextInputDialog;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class NewFolioAdder {
+public class FolioAdder {
 
-    public NewFolioAdder() {
+    public FolioAdder() {
     }
 
     public iFolioModel addFolio(int id, String name) {

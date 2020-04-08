@@ -10,7 +10,7 @@ public class FolioModel implements iFolioModel, Serializable {
 
     private int id;
     private String name;
-    private ArrayList<StockModel> stocks;
+    private ArrayList<iStockModel> stocks;
     private Double value;
 
     public FolioModel(int id, String name) {
@@ -27,7 +27,7 @@ public class FolioModel implements iFolioModel, Serializable {
 
     public void updateValue() {
         value = (double) 0;
-        for(StockModel s: stocks){
+        for(iStockModel s: stocks){
             value += s.getValue();
         }
 //        System.out.println("total: " + value);
@@ -39,55 +39,55 @@ public class FolioModel implements iFolioModel, Serializable {
     }
 
     public synchronized void refreshStocks() {
-        for (StockModel stock : stocks) {
+        for (iStockModel stock : stocks) {
             stock.refresh();
         }
     }
 
-    public ArrayList<StockModel> getStocks() {
+    public ArrayList<iStockModel> getStocks() {
         return stocks;
     }
 
-    public void setStocks(ArrayList<StockModel> stonks) {
+    public void setStocks(ArrayList<iStockModel> stonks) {
         this.stocks = stonks;
     }
 
-    public ArrayList<StockModel> sort(int sortCode, boolean ascending) {
+    public ArrayList<iStockModel> sort(int sortCode, boolean ascending) {
         if (sortCode < 0 || sortCode > 4) return null; //view must check this doesnt return null
         switch (sortCode) {
             case 0: //sort by ticker
                 if (!ascending) {
-                    stocks.sort(Comparator.comparing(StockModel::getTickerSymbol));
+                    stocks.sort(Comparator.comparing(iStockModel::getTickerSymbol));
                 } else {
-                    stocks.sort(Comparator.comparing(StockModel::getTickerSymbol).reversed());
+                    stocks.sort(Comparator.comparing(iStockModel::getTickerSymbol).reversed());
                 }
                 break;
             case 1: //sort by name
                 if (!ascending) {
-                    stocks.sort(Comparator.comparing(StockModel::getName));
+                    stocks.sort(Comparator.comparing(iStockModel::getName));
                 } else {
-                    stocks.sort(Comparator.comparing(StockModel::getName).reversed());
+                    stocks.sort(Comparator.comparing(iStockModel::getName).reversed());
                 }
                 break;
             case 2: //sort by no shares
                 if (!ascending) {
-                    stocks.sort(Comparator.comparingInt(StockModel::getNumShares));
+                    stocks.sort(Comparator.comparingInt(iStockModel::getNumShares));
                 } else {
-                    stocks.sort(Comparator.comparingInt(StockModel::getNumShares).reversed());
+                    stocks.sort(Comparator.comparingInt(iStockModel::getNumShares).reversed());
                 }
                 break;
             case 3: //sort by price per share
                 if (!ascending) {
-                    stocks.sort(Comparator.comparingDouble(StockModel::getLastKnownPrice));
+                    stocks.sort(Comparator.comparingDouble(iStockModel::getLastKnownPrice));
                 } else {
-                    stocks.sort(Comparator.comparingDouble(StockModel::getLastKnownPrice).reversed());
+                    stocks.sort(Comparator.comparingDouble(iStockModel::getLastKnownPrice).reversed());
                 }
                 break;
             case 4: //sort by value
                 if (!ascending) {
-                    stocks.sort(Comparator.comparingDouble(StockModel::getValue));
+                    stocks.sort(Comparator.comparingDouble(iStockModel::getValue));
                 } else {
-                    stocks.sort(Comparator.comparingDouble(StockModel::getValue).reversed());
+                    stocks.sort(Comparator.comparingDouble(iStockModel::getValue).reversed());
                 }
                 break;
         }
@@ -95,7 +95,7 @@ public class FolioModel implements iFolioModel, Serializable {
     }
 
     public iStockModel newStock(String ticker, String name, int shares) {
-        StockModel newStock = new StockModel(ticker, name, shares);
+        iStockModel newStock = new StockModel(ticker, name, shares);
         if (newStock.refresh() != null) {
             stocks.add(newStock);
             return newStock;

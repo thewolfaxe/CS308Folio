@@ -16,10 +16,10 @@ public interface iFolioModel {
 
     String getName();
 
-    ArrayList<StockModel> getStocks();
-    void setStocks(ArrayList<StockModel> stonks);
+    ArrayList<iStockModel> getStocks();
+    void setStocks(ArrayList<iStockModel> stonks);
 
-    ArrayList<StockModel> sort(int sortCode, boolean ascending);
+    ArrayList<iStockModel> sort(int sortCode, boolean ascending);
 
     boolean save(String path);
 

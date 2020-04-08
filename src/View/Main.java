@@ -1,9 +1,9 @@
 package View;
 
 import Controller.FileHandler;
+import Controller.FolioAdder;
 import Controller.NewStockHandler;
 import Controller.RefreshHandler;
-import Model.FolioModel;
 import Model.iFolioModel;
 import Model.iStockModel;
 import javafx.animation.KeyFrame;
@@ -85,7 +85,14 @@ public class Main extends Application {
         });
 
         menuExit.setOnAction(e -> {
-            System.exit(0);
+            if (folios.size() != 0) {
+                Alert warning = new Alert(Alert.AlertType.WARNING);
+                warning.setTitle("Quitting");
+                warning.setHeaderText("There are still folios open");
+                warning.setContentText("Please close all folios before exiting");
+                warning.showAndWait();
+            }else
+                System.exit(0);
         });
 
         primaryStage.setOnCloseRequest(close -> {
@@ -169,6 +176,7 @@ public class Main extends Application {
     }
 
     private void addNewFolio() {
+        FolioAdder adder = new FolioAdder();
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("New Folio");
         dialog.setHeaderText("Enter folio name");
@@ -176,11 +184,13 @@ public class Main extends Application {
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> {
             String newPopupField = result.get();
-            if (folios.size() > 0) {
-                folios.add(new FolioModel(folios.get(folios.size() - 1).getId() + 1, newPopupField));
-            } else {
-                folios.add(new FolioModel(0, newPopupField));
-            }
+            folios.add(adder.addFolio(folios.size(), newPopupField));
+            System.out.println("size of folio: " + folios.size());
+//            if (folios.size() > 0) {
+//                folios.add(adder.addFolio(folios.get(folios.size() - 1).getId() + 1, newPopupField));
+//            } else {
+//                folios.add(adder.addFolio(0, newPopupField));
+//            }
         });
     }
 
@@ -198,7 +208,6 @@ public class Main extends Application {
         } else {
             for (int i = 0; i < folios.size(); i++) {
                 Tab tab = setUpTab(folios.get(i));
-                int finalI = i;
 
                 tab.setOnCloseRequest(e -> { // On close delete it from the foilios arraylist
                     ButtonType workSaved = new ButtonType("Save Folio");
@@ -210,7 +219,6 @@ public class Main extends Application {
                     for (iFolioModel folio : folios) {
                         if (tab.getId().equals(String.valueOf(folio.getId()))) {
                             currentFolio = folio;
-                            current_id = String.valueOf(folio.getId());
                             break;
                         }
                     }
@@ -219,11 +227,10 @@ public class Main extends Application {
                         warning.setTitle("Quitting");
                         warning.setHeaderText("Quitting without saving folio " + currentFolio.getName());
                         warning.setContentText("Would you like to save your folio?");
-                        String finalCurrent_id = current_id;
                         warning.showAndWait().ifPresent(response -> {
                             if (response == workSaved)
                                 for (iFolioModel folio : folios) {
-                                    if (tab.getId().equals(finalCurrent_id)) {
+                                    if (tab.getId().equals(String.valueOf(folio.getId()))) {
                                         fileHandler.save(folio);
                                         break;
                                     }
@@ -232,7 +239,7 @@ public class Main extends Application {
                                 e.consume();
                             else
                                 for (iFolioModel folio : folios) {
-                                    if (tab.getId().equals(finalCurrent_id)) {
+                                    if (tab.getId().equals(String.valueOf(folio.getId()))) {
                                         folios.remove(folio);
                                         break;
                                     }

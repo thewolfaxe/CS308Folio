@@ -35,7 +35,7 @@ public class EditStockPopup extends Application {
 //        stage.show();
     }
 
-    public ArrayList<StockModel> popup() {
+    public ArrayList<iStockModel> popup() {
         Stage stage = new Stage();
 
         VBox popup = new VBox();

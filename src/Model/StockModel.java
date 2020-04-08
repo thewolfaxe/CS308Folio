@@ -159,7 +159,7 @@ public class StockModel implements iStockModel, Serializable {
     }
 
     //this needs to pull fresh values from the stock market and update local values
-    public StockModel refresh() {
+    public iStockModel refresh() {
         //deffo update lastKnownPrice, push change from here or pull changes from outside??
         try{
             String value = StrathQuoteServer.getLastValue(tickerSymbol);
