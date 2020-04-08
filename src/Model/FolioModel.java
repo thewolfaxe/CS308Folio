@@ -11,6 +11,7 @@ public class FolioModel implements iFolioModel, Serializable {
     private int id;
     private String name;
     private ArrayList<StockModel> stocks;
+    private double value;
 
     public FolioModel(int id, String name) {
         stocks = new ArrayList<StockModel>();
@@ -22,6 +23,19 @@ public class FolioModel implements iFolioModel, Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public double getValue() {
+        double total = 0;
+        for(StockModel s: stocks){
+            total+=s.getValue();
+        }
+        System.out.println("total: " + total);
+        return total;
+    }
+    
+    public void updateValue(){
+        value = getValue();
     }
 
     public synchronized void refreshStocks() {
@@ -184,4 +198,5 @@ public class FolioModel implements iFolioModel, Serializable {
     public int getId() {
         return id;
     }
+
 }

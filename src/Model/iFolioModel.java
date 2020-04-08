@@ -23,4 +23,6 @@ public interface iFolioModel {
 
 
     int getId();
+
+    double getValue();
 }

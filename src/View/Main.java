@@ -169,8 +169,11 @@ public class Main extends Application {
                     low);
 
             VBox v2 = new VBox();
-            Label totalValue = new Label("Total Folio Value: ");
-            v2.getChildren().add(totalValue);
+            Label totalValue = new Label("Total Folio Value2: ");
+            double value = folios.get(i).getValue();
+            System.out.println("here");
+            Label totalValue2 = new Label(Double.toString(value));
+            v2.getChildren().addAll(totalValue, totalValue2);
             v2.setAlignment(Pos.CENTER);
             tabContent.getChildren().addAll(newStocks, table, v2);
 
@@ -180,7 +183,8 @@ public class Main extends Application {
             refreshHandler = new RefreshHandler(folios.get(i), stocks);
             newStockHandler = new NewStockHandler(folios.get(i));
 
-            autoRefreshSetup(stocks);
+            autoRefreshSetup(stocks, primaryStage);
+
 
             tickerSymbol_txt.setOnKeyPressed(a -> {
                 if (a.getCode().equals(KeyCode.ENTER)) {
@@ -211,6 +215,11 @@ public class Main extends Application {
                         //set text for that row green, confused how to do this
                     }
                     stocks.set(j, refreshedStocks.get(j));
+                }
+                try {
+                    start(primaryStage);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
 
@@ -287,7 +296,7 @@ public class Main extends Application {
         error.showAndWait();
     }
 
-    public void autoRefreshSetup(ObservableList<iStockModel> stocks) {
+    public void autoRefreshSetup(ObservableList<iStockModel> stocks, Stage primaryStage) {
         Task<Void> refreshThread = new Task<>() {
             @Override
             protected Void call() {
@@ -300,7 +309,13 @@ public class Main extends Application {
                     Timeline autoRefresh = autoRefresh(stocks);
                     autoRefresh.setCycleCount(Timeline.INDEFINITE);
                     autoRefresh.play();
+//                    try {
+//                        start(primaryStage);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
                 });
+
                 return null;
             }
         };
