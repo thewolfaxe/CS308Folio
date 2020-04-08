@@ -16,6 +16,7 @@ public interface iFolioModel {
     String getName();
 
     ArrayList<StockModel> getStocks();
+    void setStocks(ArrayList<StockModel> stonks);
 
     ArrayList<StockModel> sort(int sortCode, boolean ascending);
 

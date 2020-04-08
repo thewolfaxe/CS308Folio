@@ -26,6 +26,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.util.ArrayList;
@@ -217,16 +218,23 @@ public class Main extends Application {
             table.setRowFactory(a -> {
                 TableRow<iStockModel> row = new TableRow<>();
                 row.setOnMouseClicked(e -> {
+                    int size = 0;
+                    int sizeAfter = 0;
                     if (e.getClickCount() == 2 && (!row.isEmpty())) {
-                        EditStockPopup popupEdit = new EditStockPopup(row.getItem(), folios.get(finalI).getName());
-                        Stage popup = popupEdit.popup();
-                        popup.showAndWait();
+                        EditStockPopup popupEdit = new EditStockPopup(row.getItem(), folios.get(finalI));
+                        size = folios.get(finalI).getStocks().size();
+                        folios.get(finalI).setStocks(popupEdit.popup());
+                        sizeAfter = folios.get(finalI).getStocks().size();
                     }
                     if (!row.isEmpty()) {
-                        iStockModel refreshedStock = refreshHandler.soloRefresh(row.getItem());
-                        if (refreshedStock != null)
-                            if (stocks.contains(refreshedStock))
-                                stocks.set(stocks.indexOf(refreshedStock), refreshedStock);
+                        if(size == sizeAfter) {
+                            iStockModel refreshedStock = refreshHandler.soloRefresh(row.getItem());
+                            if (refreshedStock != null)
+                                if (stocks.contains(refreshedStock))
+                                    stocks.set(stocks.indexOf(refreshedStock), refreshedStock);
+                        }else
+                            stocks.setAll(folios.get(finalI).getStocks());
+                            autoRefresh(stocks);
                     }
                 });
                 return row;

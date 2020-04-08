@@ -1,8 +1,11 @@
 package Controller;
 
 import Model.StockModel;
+import Model.iFolioModel;
 import Model.iStockModel;
 import javafx.collections.ObservableList;
+
+import java.util.ArrayList;
 
 public class EditStockHandler {
     iStockModel stock;
@@ -17,5 +20,14 @@ public class EditStockHandler {
 
         if(sold != 0)
             stock.sellShares(sold);
+    }
+
+    public iFolioModel delete(iFolioModel folio) {
+        for(iStockModel stonk: folio.getStocks())
+            if(stonk.getTickerSymbol().equals(stock.getTickerSymbol())) {
+                folio.deleteStock(stock.getTickerSymbol());
+                return folio;
+            }
+        return null;
     }
 }

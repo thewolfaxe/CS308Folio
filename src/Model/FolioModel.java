@@ -13,7 +13,7 @@ public class FolioModel implements iFolioModel, Serializable {
     private ArrayList<StockModel> stocks;
 
     public FolioModel(int id, String name) {
-        stocks = new ArrayList<StockModel>();
+        stocks = new ArrayList<>();
         this.id = id;
         this.name = name;
     }
@@ -32,6 +32,10 @@ public class FolioModel implements iFolioModel, Serializable {
 
     public ArrayList<StockModel> getStocks() {
         return stocks;
+    }
+
+    public void setStocks(ArrayList<StockModel> stonks) {
+        this.stocks = stonks;
     }
 
     public ArrayList<StockModel> sort(int sortCode, boolean ascending) {
