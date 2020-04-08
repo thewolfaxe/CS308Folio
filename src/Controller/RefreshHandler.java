@@ -13,11 +13,18 @@ public class RefreshHandler {
         this.stocks = stocks;
     }
 
-    public ObservableList<Model.iStockModel> mainRefresh (ObservableList<Model.iStockModel> stocks){
+    public ObservableList<Model.iStockModel> stockRefresh(ObservableList<Model.iStockModel> stocks){
         for (iStockModel stock : stocks)
             stock.refresh();
 
         return stocks;
+    }
+
+    public ObservableList<iFolioModel> totalRefresh(ObservableList<iFolioModel> total) {
+        for(iFolioModel folio: total)
+            folio.updateValue();
+
+        return total;
     }
 
     public iStockModel soloRefresh(iStockModel stock) {

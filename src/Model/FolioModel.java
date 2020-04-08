@@ -11,7 +11,7 @@ public class FolioModel implements iFolioModel, Serializable {
     private int id;
     private String name;
     private ArrayList<StockModel> stocks;
-    private double value;
+    private Double value;
 
     public FolioModel(int id, String name) {
         stocks = new ArrayList<>();
@@ -25,17 +25,17 @@ public class FolioModel implements iFolioModel, Serializable {
         return name;
     }
 
-    public double getValue() {
-        double total = 0;
+    public void updateValue() {
+        value = (double) 0;
         for(StockModel s: stocks){
-            total+=s.getValue();
+            value += s.getValue();
         }
-        System.out.println("total: " + total);
-        return total;
+        System.out.println("total: " + value);
     }
     
-    public void updateValue(){
-        value = getValue();
+    public Double getValue(){
+        updateValue();
+        return value;
     }
 
     public synchronized void refreshStocks() {
@@ -121,15 +121,6 @@ public class FolioModel implements iFolioModel, Serializable {
             }
         }
         return false; //false if the stock doesnt exist
-    }
-
-    public double getFolioValue() {
-        double val = 0;
-        for (StockModel stock : stocks) {
-//            stock.refresh();
-            val += stock.getValue();
-        }
-        return val;
     }
 
     public boolean save(String path) { //this takes just a path, no filename

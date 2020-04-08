@@ -26,7 +26,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.util.ArrayList;
@@ -169,14 +168,15 @@ public class Main extends Application {
                     high,
                     low);
 
-            VBox v2 = new VBox();
-            Label totalValue = new Label("Total Folio Value2: ");
-            double value = folios.get(i).getValue();
-            System.out.println("here");
-            Label totalValue2 = new Label(Double.toString(value));
-            v2.getChildren().addAll(totalValue, totalValue2);
-            v2.setAlignment(Pos.CENTER);
-            tabContent.getChildren().addAll(newStocks, table, v2);
+            ObservableList<iFolioModel> test = FXCollections.observableArrayList(folios.get(i));
+            TableView<iFolioModel> tot = new TableView<>();
+            tot.setItems(test);
+            TableColumn<iFolioModel, Double> total = new TableColumn<>("Total Value");
+            total.setMinWidth(100);
+            total.setCellValueFactory(new PropertyValueFactory<>("value"));
+            tot.getColumns().add(total);
+
+            tabContent.getChildren().addAll(newStocks, table, tot);
 
             tab1.setContent(tabContent);
             tabpane.getTabs().add(tab1); //add all probably
@@ -184,31 +184,31 @@ public class Main extends Application {
             refreshHandler = new RefreshHandler(folios.get(i), stocks);
             newStockHandler = new NewStockHandler(folios.get(i));
 
-            autoRefreshSetup(stocks, primaryStage);
+            autoRefreshSetup(stocks, test);
 
 
             tickerSymbol_txt.setOnKeyPressed(a -> {
                 if (a.getCode().equals(KeyCode.ENTER)) {
-                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler);
+                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler, refreshHandler, test);
                 }
             });
             numberShares_txt.setOnKeyPressed(a -> {
                 if (a.getCode().equals(KeyCode.ENTER)) {
-                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler);
+                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler, refreshHandler, test);
                 }
             });
             name_txt.setOnKeyPressed(a -> {
                 if (a.getCode().equals(KeyCode.ENTER)) {
-                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler);
+                    handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler, refreshHandler, test);
                 }
             });
             add.setOnAction(a -> {
-                handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler);
+                handleAdd(name_txt, tickerSymbol_txt, numberShares_txt, stocks, newStockHandler, refreshHandler, test);
             });
 
 
             refresh.setOnAction(a -> {
-                ObservableList<iStockModel> refreshedStocks = refreshHandler.mainRefresh(stocks);
+                ObservableList<iStockModel> refreshedStocks = refreshHandler.stockRefresh(stocks);
                 for (int j = 0; j < refreshedStocks.size(); j++) {
                     if (stocks.get(j).getLastKnownPrice() > refreshedStocks.get(j).getLastKnownPrice()) {
                         //set text for that row green, confused how to do this
@@ -216,11 +216,6 @@ public class Main extends Application {
                         //set text for that row green, confused how to do this
                     }
                     stocks.set(j, refreshedStocks.get(j));
-                }
-                try {
-                    start(primaryStage);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             });
 
@@ -243,7 +238,7 @@ public class Main extends Application {
                                     stocks.set(stocks.indexOf(refreshedStock), refreshedStock);
                         }else
                             stocks.setAll(folios.get(finalI).getStocks());
-                            autoRefresh(stocks);
+                            autoRefresh(stocks, test);
                     }
                 });
                 return row;
@@ -304,7 +299,7 @@ public class Main extends Application {
         error.showAndWait();
     }
 
-    public void autoRefreshSetup(ObservableList<iStockModel> stocks, Stage primaryStage) {
+    public void autoRefreshSetup(ObservableList<iStockModel> stocks, ObservableList<iFolioModel> totalValue) {
         Task<Void> refreshThread = new Task<>() {
             @Override
             protected Void call() {
@@ -314,14 +309,9 @@ public class Main extends Application {
                     System.out.println("Thread sleep interrupted");
                 }
                 Platform.runLater(() -> {
-                    Timeline autoRefresh = autoRefresh(stocks);
+                    Timeline autoRefresh = autoRefresh(stocks, totalValue);
                     autoRefresh.setCycleCount(Timeline.INDEFINITE);
                     autoRefresh.play();
-//                    try {
-//                        start(primaryStage);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
                 });
 
                 return null;
@@ -331,22 +321,28 @@ public class Main extends Application {
         new Thread(refreshThread).start();
     }
 
-    private Timeline autoRefresh(ObservableList<iStockModel> stocks) {
+    private Timeline autoRefresh(ObservableList<iStockModel> stocks, ObservableList<iFolioModel> totValue) {
         return new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
             System.out.println("\nRefreshing stocks");
-            ObservableList<iStockModel> refreshedStocks = refreshHandler.mainRefresh(stocks);
+            ObservableList<iStockModel> refreshedStocks = refreshHandler.stockRefresh(stocks);
+            ObservableList<iFolioModel> resfreshedTotal = refreshHandler.totalRefresh(totValue);
             for (int j = 0; j < refreshedStocks.size(); j++)
                 stocks.set(j, refreshedStocks.get(j));
+            for (int j = 0; j < resfreshedTotal.size(); j++)
+                totValue.set(j, resfreshedTotal.get(j));
             System.out.println("stocks refreshed");
             System.out.println(stocks.size());
         }));
     }
 
 
-    private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<iStockModel> stocks, NewStockHandler newStockHandler) {
+    private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<iStockModel> stocks, NewStockHandler newStockHandler, RefreshHandler refresh, ObservableList<iFolioModel> totals) {
         iStockModel stock = newStockHandler.addStock(name_txt.getText(), tickerSymbol_txt.getText().toUpperCase(), numberShares_txt.getText());
         if (stock != null) {
             stocks.add(stock);
+            ObservableList<iFolioModel> refreshedTotal = refresh.totalRefresh(totals);
+            for (int j = 0; j < refreshedTotal.size(); j++)
+                totals.set(j, refreshedTotal.get(j));
 
             name_txt.clear();
             tickerSymbol_txt.clear();

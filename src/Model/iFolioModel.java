@@ -11,7 +11,8 @@ public interface iFolioModel {
 
     boolean deleteStock(String ticker);
 
-    double getFolioValue();
+    Double getValue();
+    void updateValue();
 
     String getName();
 
@@ -25,5 +26,4 @@ public interface iFolioModel {
 
     int getId();
 
-    double getValue();
 }

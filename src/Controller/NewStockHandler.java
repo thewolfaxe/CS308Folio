@@ -7,7 +7,6 @@ import javafx.collections.ObservableList;
 
 public class NewStockHandler {
     iFolioModel folioModel;
-    iStockModel stock;
 
     public NewStockHandler(iFolioModel folioModel) {
         this.folioModel = folioModel;
