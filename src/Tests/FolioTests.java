@@ -1,5 +1,7 @@
-package Model;
+package Tests;
 
+import Model.FolioModel;
+import Model.StockModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

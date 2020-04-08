@@ -1,4 +1,7 @@
-package Model;
+package Tests;
+
+import Model.FolioModel;
+import Model.StrathQuoteServer;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
