@@ -89,14 +89,14 @@ public class Main extends Application {
         });
 
         primaryStage.setOnCloseRequest(close -> {
-            if(folios.size() != 0) {
+            if (folios.size() != 0) {
                 Alert warning = new Alert(Alert.AlertType.WARNING);
                 warning.setTitle("Quitting");
                 warning.setHeaderText("There are still folios open");
                 warning.setContentText("Please close all folios before exiting");
                 warning.showAndWait();
                 close.consume();
-                }
+            }
         });
 
 
@@ -203,28 +203,43 @@ public class Main extends Application {
                 tab.setOnCloseRequest(e -> { // On close delete it from the foilios arraylist
                     ButtonType workSaved = new ButtonType("Save Folio");
                     ButtonType goBack = new ButtonType("Quit without saving");
+                    ButtonType cancel = new ButtonType("Cancel");
+                    iFolioModel currentFolio = null;
+                    String current_id = null;
 
-                    Alert warning = new Alert(Alert.AlertType.CONFIRMATION, "", workSaved, goBack);
-                    warning.setTitle("Quitting");
-                    warning.setHeaderText("Quitting without saving");
-                    warning.setContentText("Would you like to save your folio?");
-                    warning.showAndWait().ifPresent(response -> {
-                        int id = -1;
-                        if(response == workSaved)
-                            for(iFolioModel folio: folios) {
-                                if(tab.getId().equals(String.valueOf(folio.getId()))) {
-                                    id = folio.getId();
-                                    fileHandler.save(folio);
-                                    break;
-                                }
-                            }
-                        for(iFolioModel folio: folios) {
-                            if (tab.getId().equals(String.valueOf(folio.getId()))) {
-                                folios.remove(folio);
-                                break;
-                            }
+                    for (iFolioModel folio : folios) {
+                        if (tab.getId().equals(String.valueOf(folio.getId()))) {
+                            currentFolio = folio;
+                            current_id = String.valueOf(folio.getId());
+                            break;
                         }
-                    });
+                    }
+                    if(currentFolio != null) {
+                        Alert warning = new Alert(Alert.AlertType.CONFIRMATION, "", workSaved, goBack, cancel);
+                        warning.setTitle("Quitting");
+                        warning.setHeaderText("Quitting without saving folio " + currentFolio.getName());
+                        warning.setContentText("Would you like to save your folio?");
+                        String finalCurrent_id = current_id;
+                        warning.showAndWait().ifPresent(response -> {
+                            if (response == workSaved)
+                                for (iFolioModel folio : folios) {
+                                    if (tab.getId().equals(finalCurrent_id)) {
+                                        fileHandler.save(folio);
+                                        break;
+                                    }
+                                }
+                            else if (response == cancel)
+                                e.consume();
+                            else
+                                for (iFolioModel folio : folios) {
+                                    if (tab.getId().equals(finalCurrent_id)) {
+                                        folios.remove(folio);
+                                        break;
+                                    }
+                                }
+                        });
+                    }else
+                        System.out.println("This should never show");
                 });
 
                 tabpane.getTabs().add(tab);
@@ -382,7 +397,7 @@ public class Main extends Application {
                     folio.setStocks(popupEdit.popup());
                     int after = folio.getStocks().size();
 
-                    if(before > after) {
+                    if (before > after) {
                         System.out.println("IM GETTUIG HERE");
                         stocks.remove(row.getItem());
                     }
