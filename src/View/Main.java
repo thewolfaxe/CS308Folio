@@ -126,7 +126,7 @@ public class Main extends Application {
     private Timeline autoRefresh(ObservableList<iStockModel> stocks, ObservableList<iFolioModel> totValue, RefreshHandler refreshHandler) {
         return new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
             System.out.println("\nRefreshing stocks");
-            ObservableList<iStockModel> refreshedStocks = refreshHandler.stockRefresh();
+            ObservableList<iStockModel> refreshedStocks = refreshHandler.stockRefresh(stocks);
             for (int j = 0; j < refreshedStocks.size(); j++)
                 stocks.set(j, refreshedStocks.get(j));
 
@@ -138,7 +138,7 @@ public class Main extends Application {
     }
 
     private void handleAdd(TextField name_txt, TextField tickerSymbol_txt, TextField numberShares_txt, ObservableList<iStockModel> stocks, NewStockHandler newStockHandler, RefreshHandler refresh, ObservableList<iFolioModel> totals) {
-        iStockModel stock = newStockHandler.addStock(name_txt.getText(), tickerSymbol_txt.getText().toUpperCase(), numberShares_txt.getText(), stocks);
+        iStockModel stock = newStockHandler.addStock(name_txt.getText(), tickerSymbol_txt.getText().toUpperCase().trim(), numberShares_txt.getText(), stocks);
         if (stock != null) {
             stocks.add(stock);
             ObservableList<iFolioModel> refreshedTotal = refresh.totalRefresh(totals);
@@ -302,11 +302,10 @@ public class Main extends Application {
 
         tabContent.getChildren().addAll(newStocks, table, tot);
 
-        RefreshHandler refreshHandler = new RefreshHandler(folio, stocks);
+        RefreshHandler refreshHandler = new RefreshHandler(folio);
         NewStockHandler newStockHandler = new NewStockHandler(folio);
 
         autoRefreshSetup(stocks, test, refreshHandler);
-
 
         tickerSymbol_txt.setOnKeyPressed(a -> {
             if (a.getCode().equals(KeyCode.ENTER)) {
@@ -329,37 +328,36 @@ public class Main extends Application {
         });
 
         refresh.setOnAction(a -> {
-            ObservableList<iStockModel> refreshedStocks = refreshHandler.stockRefresh();
-            for (int j = 0; j < refreshedStocks.size(); j++) {
-                if (stocks.get(j).getLastKnownPrice() > refreshedStocks.get(j).getLastKnownPrice()) {
-                    //set text for that row green, confused how to do this
-                } else if (stocks.get(j).getLastKnownPrice() < refreshedStocks.get(j).getLastKnownPrice()) {
-                    //set text for that row green, confused how to do this
-                }
+            ObservableList<iStockModel> refreshedStocks = refreshHandler.stockRefresh(stocks);
+            for (int j = 0; j < refreshedStocks.size(); j++)
                 stocks.set(j, refreshedStocks.get(j));
-            }
+
+            ObservableList<iFolioModel> refreshedTotal = refreshHandler.totalRefresh(test);
+            for (int j = 0; j < refreshedTotal.size(); j++)
+                test.set(j, refreshedTotal.get(j));
         });
 
         table.setRowFactory(a -> {
             TableRow<iStockModel> row = new TableRow<>();
             row.setOnMouseClicked(e -> {
-                int size = 0;
-                int sizeAfter = 0;
                 if (e.getClickCount() == 2 && (!row.isEmpty())) {
                     EditStockPopup popupEdit = new EditStockPopup(row.getItem(), folio);
-                    size = folio.getStocks().size();
+                    int before = folio.getStocks().size();
                     folio.setStocks(popupEdit.popup());
-                    sizeAfter = folio.getStocks().size();
-                }
-                if (!row.isEmpty()) {
-                    if (size == sizeAfter) {
-                        iStockModel refreshedStock = refreshHandler.soloRefresh(row.getItem());
-                        if (refreshedStock != null)
-                            if (stocks.contains(refreshedStock))
-                                stocks.set(stocks.indexOf(refreshedStock), refreshedStock);
-                    } else
-                        stocks.setAll(folio.getStocks());
-                    autoRefresh(stocks, test, refreshHandler);
+                    int after = folio.getStocks().size();
+
+                    if(before > after) {
+                        System.out.println("IM GETTUIG HERE");
+                        stocks.remove(row.getItem());
+                    }
+
+                    ObservableList<iStockModel> refreshedStocks = refreshHandler.stockRefresh(stocks);
+                    for (int j = 0; j < refreshedStocks.size(); j++)
+                        stocks.set(j, refreshedStocks.get(j));
+
+                    ObservableList<iFolioModel> refreshedTotal = refreshHandler.totalRefresh(test);
+                    for (int j = 0; j < refreshedTotal.size(); j++)
+                        test.set(j, refreshedTotal.get(j));
                 }
             });
             return row;

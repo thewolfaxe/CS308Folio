@@ -161,34 +161,6 @@ public class FolioModel implements iFolioModel, Serializable {
             return null;
         }
     }
-    /*
-    public boolean save(String pathFile){
-        File path = new File(pathFile);
-
-        try(PrintWriter pw = new PrintWriter(path)){
-            StringBuilder sb = new StringBuilder();
-
-            for (StockModel s : stocks) { //would use stocks.forEach but confusing to read. . .
-                sb.append(s.getTickerSymbol());
-                sb.append(',');
-                sb.append(s.getName());
-                sb.append(',');
-                sb.append(s.getInitialNoOfShares());
-                sb.append(',');
-                sb.append(s.getInitBuyPrice());
-                sb.append(',');
-                sb.append(s.getNumShares());
-                sb.append(',');
-                sb.append(s.getLastKnownPrice());
-
-                pw.write(String.valueOf(sb));
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return true;
-    } */
-
 
     public int getId() {
         return id;

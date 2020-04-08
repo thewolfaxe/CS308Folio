@@ -77,4 +77,5 @@ fabric.properties
 mods/*
 .idea/compiler.xml
 lib
+.idea/inspectionProfiles
 

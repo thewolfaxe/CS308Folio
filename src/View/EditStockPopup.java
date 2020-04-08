@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class EditStockPopup extends Application {
     iStockModel stock;
@@ -38,7 +39,7 @@ public class EditStockPopup extends Application {
         Stage stage = new Stage();
 
         VBox popup = new VBox();
-        Insets s = new Insets(10,10,10,10);
+        Insets s = new Insets(10, 10, 10, 10);
         popup.setPadding(s);
         popup.setSpacing(10);
 
@@ -86,8 +87,8 @@ public class EditStockPopup extends Application {
         Button apply = new Button("Apply");
         Button cancel = new Button("Cancel");
         Button sellAll = new Button("Sell All");
-        Button delete = new Button("Delete");
-        buttons.getChildren().addAll(apply, cancel, sellAll, delete);
+        Button del = new Button("Delete");
+        buttons.getChildren().addAll(apply, cancel, sellAll, del);
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(3);
 
@@ -96,20 +97,29 @@ public class EditStockPopup extends Application {
         stage.setScene(new Scene(popup));
 
         EditStockHandler handler = new EditStockHandler(stock);
+
         apply.setOnMouseClicked(e -> {
             int bought, sold;
             try {
                 bought = (int) Integer.parseInt(buy_txt.getText());
-            }catch (NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 bought = 0;
             }
             try {
                 sold = (int) Integer.parseInt(sell_txt.getText());
-            }catch (NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 sold = 0;
             }
-            handler.editStockApply(bought, sold);
-            stage.close();
+            if(stock.getNumShares() >= sold) {
+                handler.editStockApply(bought, sold);
+                stage.close();
+            }else {
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("Insufficient stocks");
+                error.setHeaderText("You don't have that many stocks");
+                error.setContentText("Please give a possible amount");
+                error.showAndWait();
+            }
         });
 
         cancel.setOnMouseClicked(e -> {
@@ -124,21 +134,24 @@ public class EditStockPopup extends Application {
             deleteQ.setContentText("Would you like to remove this stock from your folio?");
             deleteQ.initOwner(stage);
             Optional<ButtonType> choice = deleteQ.showAndWait();
-            if(choice.get() == ButtonType.OK)
-                delete(handler, stage);
+            choice.ifPresent(l -> {
+                if(choice.get() == ButtonType.OK) {
+                    folio = delete(handler, stage);
+                }
+            });
             stage.close();
         });
 
-        delete.setOnMouseClicked(e -> {
-            if(stock.getNumShares() != 0) {
+        del.setOnMouseClicked(e -> {
+            if (stock.getNumShares() != 0) {
                 Alert warning = new Alert(Alert.AlertType.WARNING);
                 warning.setTitle("Warning");
                 warning.setHeaderText("You still have shares in this company");
                 warning.setContentText("We cannot delete this stock until there are 0 shares");
                 warning.initOwner(stage);
                 warning.showAndWait();
-            }else {
-                delete(handler, stage);
+            } else {
+                folio = delete(handler, stage);
                 stage.close();
             }
         });
@@ -148,18 +161,17 @@ public class EditStockPopup extends Application {
         return folio.getStocks();
     }
 
-    public void delete(EditStockHandler handler, Stage stage) {
+    public iFolioModel delete(EditStockHandler handler, Stage stage) {
         iFolioModel check = handler.delete(folio);
-        if(check != null)
-           folio = check;
-        else {
-            Alert error = new Alert(Alert.AlertType.ERROR);
-            error.setTitle("Error");
-            error.setHeaderText("There was a problem deleting your stock");
-            error.setContentText("Please try again later");
-            error.initOwner(stage);
-            error.showAndWait();
-        }
+        if (check != null)
+            return check;
+        Alert error = new Alert(Alert.AlertType.ERROR);
+        error.setTitle("Error");
+        error.setHeaderText("There was a problem deleting your stock");
+        error.setContentText("Please try again later");
+        error.initOwner(stage);
+        error.showAndWait();
+        return null;
     }
 
     public static void main(String[] args) {
