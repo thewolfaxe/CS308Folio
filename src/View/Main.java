@@ -38,6 +38,7 @@ public class Main extends Application {
     private ArrayList<iFolioModel> folios = new ArrayList<>(); // all current opened folio's
     VBox vBox;
     AtomicReference<TabPane> tabpane;
+    FileHandler fileHandler;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -64,7 +65,7 @@ public class Main extends Application {
             tabpane.get().getTabs().setAll(newTabs.getTabs());
         });
 
-        FileHandler fileHandler = new FileHandler();
+        fileHandler = new FileHandler();
 
         menuSave.setOnAction(e -> {
             if (folios.size() > 0) {
@@ -86,6 +87,18 @@ public class Main extends Application {
         menuExit.setOnAction(e -> {
             System.exit(0);
         });
+
+        primaryStage.setOnCloseRequest(close -> {
+            if(folios.size() != 0) {
+                Alert warning = new Alert(Alert.AlertType.WARNING);
+                warning.setTitle("Quitting");
+                warning.setHeaderText("There are still folios open");
+                warning.setContentText("Please close all folios before exiting");
+                warning.showAndWait();
+                close.consume();
+                }
+        });
+
 
         vBox.getChildren().add(tabpane.get());
         primaryStage.setScene(new Scene(vBox, 1000, 700));
@@ -188,7 +201,30 @@ public class Main extends Application {
                 int finalI = i;
 
                 tab.setOnCloseRequest(e -> { // On close delete it from the foilios arraylist
-                    folios.remove(folios.get(finalI));
+                    ButtonType workSaved = new ButtonType("Save Folio");
+                    ButtonType goBack = new ButtonType("Quit without saving");
+
+                    Alert warning = new Alert(Alert.AlertType.CONFIRMATION, "", workSaved, goBack);
+                    warning.setTitle("Quitting");
+                    warning.setHeaderText("Quitting without saving");
+                    warning.setContentText("Would you like to save your folio?");
+                    warning.showAndWait().ifPresent(response -> {
+                        int id = -1;
+                        if(response == workSaved)
+                            for(iFolioModel folio: folios) {
+                                if(tab.getId().equals(String.valueOf(folio.getId()))) {
+                                    id = folio.getId();
+                                    fileHandler.save(folio);
+                                    break;
+                                }
+                            }
+                        for(iFolioModel folio: folios) {
+                            if (tab.getId().equals(String.valueOf(folio.getId()))) {
+                                folios.remove(folio);
+                                break;
+                            }
+                        }
+                    });
                 });
 
                 tabpane.getTabs().add(tab);
@@ -364,6 +400,7 @@ public class Main extends Application {
         });
 
         tab.setContent(tabContent);
+        tab.setId(String.valueOf(folio.getId()));
         return tab;
 
     }
