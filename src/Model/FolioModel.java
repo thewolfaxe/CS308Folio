@@ -30,7 +30,7 @@ public class FolioModel implements iFolioModel, Serializable {
         for(StockModel s: stocks){
             value += s.getValue();
         }
-        System.out.println("total: " + value);
+//        System.out.println("total: " + value);
     }
     
     public Double getValue(){

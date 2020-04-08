@@ -13,8 +13,8 @@ public class RefreshHandler {
         this.stocks = stocks;
     }
 
-    public ObservableList<Model.iStockModel> stockRefresh(ObservableList<Model.iStockModel> stocks){
-        for (iStockModel stock : stocks)
+    public ObservableList<Model.iStockModel> stockRefresh(){
+        for (iStockModel stock : folioModel.getStocks())
             stock.refresh();
 
         return stocks;
