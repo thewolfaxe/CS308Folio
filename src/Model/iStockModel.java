@@ -4,7 +4,6 @@ public interface iStockModel {
 
         void buyShares(int amount);
         boolean sellShares(int amount);
-        double estimateProfits();
         double getTrend();
         iStockModel refresh();
         String getTickerSymbol();
@@ -17,4 +16,6 @@ public interface iStockModel {
         void setValue(double value);
         double getInitValue();
         double getGain();
+        double getHigh();
+        double getLow();
 }

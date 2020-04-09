@@ -3,9 +3,6 @@ import Model.iFolioModel;
 import Model.iStockModel;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-
-
 public class RefreshHandler {
     private iFolioModel folioModel;
 
@@ -25,14 +22,6 @@ public class RefreshHandler {
             folio.updateValue();
 
         return total;
-    }
-
-    public ArrayList<iStockModel> specalRefresh(ObservableList<iStockModel> stocks) {
-        ArrayList<iStockModel> stonks = new ArrayList<>();
-        for(iStockModel stock: stocks) {
-            stonks.add(stock.refresh());
-        }
-        return stonks;
     }
 
     public iStockModel soloRefresh(iStockModel stock) {

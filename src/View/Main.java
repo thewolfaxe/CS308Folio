@@ -313,6 +313,7 @@ public class Main extends Application {
                         setStyle("");
                     } else {
                         double num = item;
+                        num = Math.round(num*100)/100.00;
                         if (num < 0) {
                             setText(Double.toString(num));
                             setBackground(new Background(new BackgroundFill(Color.RED,

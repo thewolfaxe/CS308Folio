@@ -30,14 +30,14 @@ public class FolioModel implements iFolioModel, Serializable {
         for(iStockModel s: stocks){
             value += s.getValue();
         }
-//        System.out.println("total: " + value);
     }
     
     public Double getValue(){
         updateValue();
-        return value;
+        return Math.round(value*100)/100.00;
     }
 
+    @Override
     public synchronized void refreshStocks() {
         for (iStockModel stock : stocks) {
             stock.refresh();

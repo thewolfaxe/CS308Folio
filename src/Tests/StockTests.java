@@ -39,9 +39,4 @@ public class StockTests {
     public void checkTrendTest(){
         Assertions.assertTrue(testStockGood.getTrend() > 0 || testStockGood.getTrend() == 0 || testStockGood.getTrend() < 0);
     }
-
-    @Test
-    public void estimateProfitsTest(){
-        Assertions.assertTrue(testStockGood.estimateProfits() > 0 || testStockGood.estimateProfits() == 0 || testStockGood.estimateProfits() < 0);
-    }
 }

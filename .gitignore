@@ -79,3 +79,4 @@ mods/*
 lib
 .idea/inspectionProfiles
 .idea/artifacts
+~*
