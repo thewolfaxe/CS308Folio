@@ -125,11 +125,6 @@ public class Main extends Application {
         Task<Void> refreshThread = new Task<>() {
             @Override
             protected Void call() {
-                try {
-                    Thread.sleep(60000);
-                } catch (InterruptedException e) {
-                    System.out.println("Thread sleep interrupted");
-                }
                 Platform.runLater(() -> {
                     Timeline autoRefresh = autoRefresh(stocks, totalValue, refreshHandler);
                     autoRefresh.setCycleCount(Timeline.INDEFINITE);
@@ -144,7 +139,7 @@ public class Main extends Application {
     }
 
     private Timeline autoRefresh(ObservableList<iStockModel> stocks, ObservableList<iFolioModel> totValue, RefreshHandler refreshHandler) {
-        return new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
+        return new Timeline(new KeyFrame(Duration.seconds(60), actionEvent -> {
             System.out.println("\nRefreshing stocks");
             ObservableList<iStockModel> refreshedStocks = refreshHandler.stockRefresh(stocks);
             for (int j = 0; j < refreshedStocks.size(); j++)
@@ -183,14 +178,8 @@ public class Main extends Application {
         dialog.setContentText("Folio Name:");
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> {
-            String newPopupField = result.get();
-            folios.add(adder.addFolio(folios.size(), newPopupField));
-            System.out.println("size of folio: " + folios.size());
-//            if (folios.size() > 0) {
-//                folios.add(adder.addFolio(folios.get(folios.size() - 1).getId() + 1, newPopupField));
-//            } else {
-//                folios.add(adder.addFolio(0, newPopupField));
-//            }
+            String folioName = result.get();
+            folios.add(adder.addFolio(folios.size(), folioName));
         });
     }
 
@@ -209,46 +198,47 @@ public class Main extends Application {
             for (int i = 0; i < folios.size(); i++) {
                 Tab tab = setUpTab(folios.get(i));
 
-                tab.setOnCloseRequest(e -> { // On close delete it from the foilios arraylist
+                tab.setOnCloseRequest(e -> { // On close, prompt save before exit
                     ButtonType workSaved = new ButtonType("Save Folio");
                     ButtonType goBack = new ButtonType("Quit without saving");
                     ButtonType cancel = new ButtonType("Cancel");
-                    iFolioModel currentFolio = null;
-                    String current_id = null;
 
+                    iFolioModel currentFolio = null;
                     for (iFolioModel folio : folios) {
                         if (tab.getId().equals(String.valueOf(folio.getId()))) {
                             currentFolio = folio;
                             break;
                         }
                     }
+
                     if(currentFolio != null) {
                         Alert warning = new Alert(Alert.AlertType.CONFIRMATION, "", workSaved, goBack, cancel);
                         warning.setTitle("Quitting");
                         warning.setHeaderText("Quitting without saving folio " + currentFolio.getName());
                         warning.setContentText("Would you like to save your folio?");
                         warning.showAndWait().ifPresent(response -> {
-                            if (response == workSaved)
-                                for (iFolioModel folio : folios) {
-                                    if (tab.getId().equals(String.valueOf(folio.getId()))) {
-                                        fileHandler.save(folio);
-                                        break;
-                                    }
+                            iFolioModel current = null;
+                            for (iFolioModel folio : folios) {
+                                if (tab.getId().equals(String.valueOf(folio.getId()))) {
+                                    current = folio;
+                                    break;
                                 }
-                            else if (response == cancel)
-                                e.consume();
-                            else
-                                for (iFolioModel folio : folios) {
-                                    if (tab.getId().equals(String.valueOf(folio.getId()))) {
-                                        folios.remove(folio);
-                                        break;
-                                    }
-                                }
+                            }
+
+                            if (current != null) {
+                                if (response == workSaved) {
+                                    fileHandler.save(current);
+                                    folios.remove(current);
+                                }else if (response == cancel)
+                                    e.consume();
+                                else
+                                    folios.remove(current);
+                            }else
+                                System.out.println("If this shows ive done fucked it");
                         });
                     }else
-                        System.out.println("This should never show");
+                        System.out.println("If this shows ive once again have done fucked it");
                 });
-
                 tabpane.getTabs().add(tab);
             }
         }
@@ -312,24 +302,29 @@ public class Main extends Application {
         change.setMinWidth(100);
         change.setCellValueFactory(new PropertyValueFactory<>("trend"));
 
-        change.setCellFactory(a -> new TableCell<>() {
-            @Override
-            public void updateItem(Double item, boolean empty) {
-                super.updateItem(item, false);
-                if (item != null) {
-                    double num = Math.round(item * 100);
-                    num = num / 100;
-                    if (num < 0) {
-                        this.setText(Double.toString(num));
-                        this.setBackground(new Background(new BackgroundFill(Color.RED,
-                                null, null)));
+        change.setCellFactory(a -> {
+            return new TableCell<iStockModel, Double>() {
+                @Override
+                public void updateItem(Double item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) {
+                        setText(null);
+                        setBackground(null);
+                        setStyle("");
                     } else {
-                        this.setText(Double.toString(num));
-                        this.setBackground(new Background(new BackgroundFill(Color.GREEN,
-                                null, null)));
+                        double num = item;
+                        if (num < 0) {
+                            setText(Double.toString(num));
+                            setBackground(new Background(new BackgroundFill(Color.RED,
+                                    null, null)));
+                        } else {
+                            setText(Double.toString(num));
+                            setBackground(new Background(new BackgroundFill(Color.GREEN,
+                                    null, null)));
+                        }
                     }
                 }
-            }
+            };
         });
 
         TableColumn<iStockModel, Double> high = new TableColumn<>("High");

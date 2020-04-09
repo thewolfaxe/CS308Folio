@@ -78,4 +78,4 @@ mods/*
 .idea/compiler.xml
 lib
 .idea/inspectionProfiles
-
+.idea/artifacts
